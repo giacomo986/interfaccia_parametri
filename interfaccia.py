@@ -132,12 +132,3 @@ class Ui_Form(object):
         self.CancelButton.setText(_translate("Form", "Annulla"))
         self.AcceptButton.setText(_translate("Form", "Conferma"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Form = QtWidgets.QWidget()
-    ui = Ui_Form()
-    ui.setupUi(Form)
-    Form.show()
-    sys.exit(app.exec_())
