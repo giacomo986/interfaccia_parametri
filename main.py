@@ -1,10 +1,10 @@
-import sys
+import sys, os
 from PyQt5 import QtWidgets, QtCore
 import interfaccia
 import csv
 
 
-class CsvTableModel(qtc.QAbstractTableModel):
+class CsvTableModel(QtCore.QAbstractTableModel):
     """The model for a CSV table."""
 
     def __init__(self, csv_file):
@@ -29,7 +29,17 @@ class CsvTableModel(qtc.QAbstractTableModel):
         if role in (QtCore.Qt.DisplayRole, QtCore.Qt.EditRole):
             return self._data[index.row()][index.column()]
 
+
     # Additional features methods:
+
+    def getCell(self, X, Y):
+        return self._data[X][Y]
+
+    def rowNumber(self):
+        return len(self._data)
+
+    def columnNumber(self):
+        return len(self._headers)
 
     def headerData(self, section, orientation, role):
 
@@ -58,13 +68,21 @@ class CsvTableModel(qtc.QAbstractTableModel):
         else:
             return False
 
-
+def InizializzaDati():
+    cwd = os.getcwd()
+    modelClienti = CsvTableModel(cwd + "/clienti.csv")
+    for element in range(0, modelClienti.rowNumber()):
+        ui.comboBox_Cliente.addItem(modelClienti.getCell(element, 0), element)
+    
+    modelMateriali = CsvTableModel(cwd + "/materiali.csv")
+    for element in range(0, modelMateriali.rowNumber()):
+        ui.comboBox_Materiale.addItem(modelMateriali.getCell(element, 0), element)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
     ui = interfaccia.Ui_Form()
     ui.setupUi(Form)
+    InizializzaDati()
     Form.show()
-    self.model = CsvTableModel("cliente.csv")
     sys.exit(app.exec_())
