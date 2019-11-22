@@ -69,16 +69,28 @@ class CsvTableModel(QtCore.QAbstractTableModel):
             return False
 
 def InizializzaDati():
-    cwd = os.getcwd()
     modelClienti = CsvTableModel(cwd + "/clienti.csv")
     for element in range(0, modelClienti.rowNumber()):
-        ui.comboBox_Cliente.addItem(modelClienti.getCell(element, 0), element)
+        ui.comboBox_Cliente.addItem(modelClienti.getCell(element, 0), modelClienti.getCell(element, 1))
     
     modelMateriali = CsvTableModel(cwd + "/materiali.csv")
     for element in range(0, modelMateriali.rowNumber()):
-        ui.comboBox_Materiale.addItem(modelMateriali.getCell(element, 0), element)
+        ui.comboBox_Materiale.addItem(modelMateriali.getCell(element, 0), modelMateriali.getCell(element, 1))
+
+    ui.CancelButton.clicked.connect(ChiudiApplicazione)
+    ui.AcceptButton.clicked.connect(SalvaDati)
+
+def SalvaDati():
+    print(ui.comboBox_Materiale.currentIndex() )
+    print(ui.comboBox_Materiale.currentText() )
+    print(ui.comboBox_Materiale.currentData() )
+    modelFile = CsvTableModel(cwd + "/" + ui.lineEdit_Riferimento.text + ".csv")
+
+def ChiudiApplicazione():
+    QtCore.QCoreApplication.instance().quit()
 
 if __name__ == "__main__":
+    cwd = os.getcwd()
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
     ui = interfaccia.Ui_Form()
