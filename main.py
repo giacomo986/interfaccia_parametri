@@ -1,90 +1,56 @@
 import sys, os
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 import interfaccia
+from CsvTableModelClass import CsvTableModel
 import csv
-
-
-class CsvTableModel(QtCore.QAbstractTableModel):
-    """The model for a CSV table."""
-
-    def __init__(self, csv_file):
-        super().__init__()
-        self.filename = csv_file
-        with open(self.filename) as fh:
-            csvreader = csv.reader(fh)
-            self._headers = next(csvreader)
-            self._data = list(csvreader)
-
-    # Minimum necessary methods:
-    def rowCount(self, parent):
-        return len(self._data)
-
-    def columnCount(self, parent):
-        return len(self._headers)
-
-    def data(self, index, role):
-        # original if statement:
-        # if role == qtc.Qt.DisplayRole:
-        # Add EditRole so that the cell is not cleared when editing
-        if role in (QtCore.Qt.DisplayRole, QtCore.Qt.EditRole):
-            return self._data[index.row()][index.column()]
-
-
-    # Additional features methods:
-
-    def getCell(self, X, Y):
-        return self._data[X][Y]
-
-    def rowNumber(self):
-        return len(self._data)
-
-    def columnNumber(self):
-        return len(self._headers)
-
-    def headerData(self, section, orientation, role):
-
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
-            return self._headers[section]
-        else:
-            return super().headerData(section, orientation, role)
-
-    def sort(self, column, order):
-        self.layoutAboutToBeChanged.emit()  # needs to be emitted before a sort
-        self._data.sort(key=lambda x: x[column])
-        if order == QtCore.Qt.DescendingOrder:
-            self._data.reverse()
-        self.layoutChanged.emit()  # needs to be emitted after a sort
-
-    # Methods for Read/Write
-
-    def flags(self, index):
-        return super().flags(index) | QtCore.Qt.ItemIsEditable
-
-    def setData(self, index, value, role):
-        if index.isValid() and role == QtCore.Qt.EditRole:
-            self._data[index.row()][index.column()] = value
-            self.dataChanged.emit(index, index, [role])
-            return True
-        else:
-            return False
+import datetime
 
 def InizializzaDati():
     modelClienti = CsvTableModel(cwd + "/clienti.csv")
-    for element in range(0, modelClienti.rowNumber()):
+    for element in range(0, modelClienti.NumbersOfRows()):
         ui.comboBox_Cliente.addItem(modelClienti.getCell(element, 0), modelClienti.getCell(element, 1))
     
     modelMateriali = CsvTableModel(cwd + "/materiali.csv")
-    for element in range(0, modelMateriali.rowNumber()):
+    for element in range(0, modelMateriali.NumbersOfRows()):
         ui.comboBox_Materiale.addItem(modelMateriali.getCell(element, 0), modelMateriali.getCell(element, 1))
 
     ui.CancelButton.clicked.connect(ChiudiApplicazione)
     ui.AcceptButton.clicked.connect(SalvaDati)
 
 def SalvaDati():
-    print(ui.comboBox_Materiale.currentIndex() )
-    print(ui.comboBox_Materiale.currentText() )
-    print(ui.comboBox_Materiale.currentData() )
-    modelFile = CsvTableModel(cwd + "/" + ui.lineEdit_Riferimento.text + ".csv")
+    nomeFile = str(cwd + "/" + ui.lineEdit_Riferimento.text() + ".csv")
+    if not os.path.exists(nomeFile):
+        open(nomeFile, "w")
+    else:
+        qm = QtWidgets.QMessageBox
+        question = qm.question(None, "File già esistente", "File già esistente. Vuoi sovrascrivere il file?", qm.Yes | qm.No)
+        if (question == qm.No):
+            qm.information(None, "Informazione", "Nessuna modifica")
+            return
+
+    with open(nomeFile, "w", newline="") as csvfile:
+        writer = csv.writer(csvfile, delimiter=",",
+                                quotechar="|", quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(["Riferimento"] +       ["Codice padre"] +              ["Macchina"] +
+                        ["Materiale"] +         ["Denominazione profilo"] +     ["Data di creazione"] +
+                        ["Nome"] +              ["Codice"] +                    ["Cliente"] +
+                        ["Q.tà per Disegno"] +  ["Misura di massima"] +         ["Massa"])
+
+        writer.writerow([ui.lineEdit_Riferimento.text()] +
+                        [ui.lineEdit_CodicePadre.text()] +
+                        [ui.lineEdit_Macchina.text()] +
+                        [ui.comboBox_Materiale.currentText()] +
+                        [ui.comboBox_Denominazione.currentText()] +
+                        [datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")] +
+                        [ui.lineEdit_Nome.text()] +
+                        [ui.lineEdit_Codice.text()] +
+                        [ui.comboBox_Cliente.currentText()] +
+                        [ui.lineEdit_Quantita.text()] +
+                        [ui.lineEdit_MisuraMax.text()] +
+                        [ui.lineEdit_Massa.text()])
+
+    qm = QtWidgets.QMessageBox
+    qm.information(None, "Informazione", "File salvato.")
 
 def ChiudiApplicazione():
     QtCore.QCoreApplication.instance().quit()
