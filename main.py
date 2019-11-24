@@ -31,10 +31,18 @@ def SalvaDati():
     with open(nomeFile, "w", newline="") as csvfile:
         writer = csv.writer(csvfile, delimiter=",",
                                 quotechar="|", quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(["Riferimento"] +       ["Codice padre"] +              ["Macchina"] +
-                        ["Materiale"] +         ["Denominazione profilo"] +     ["Data di creazione"] +
-                        ["Nome"] +              ["Codice"] +                    ["Cliente"] +
-                        ["Q.tà per Disegno"] +  ["Misura di massima"] +         ["Massa"])
+        writer.writerow(["Riferimento"] +
+                        ["Codice padre"] +
+                        ["Macchina"] +
+                        ["Materiale"] +
+                        ["Denominazione profilo"] +
+                        ["Data di creazione"] +
+                        ["Nome"] +
+                        ["Codice"] +
+                        ["Cliente"] +
+                        ["Q.tà per Disegno"] +
+                        ["Misura di massima"] +
+                        ["Massa"])
 
         writer.writerow([ui.lineEdit_Riferimento.text()] +
                         [ui.lineEdit_CodicePadre.text()] +
