@@ -1,9 +1,7 @@
 import sys, os
 from PyQt5 import QtWidgets, QtCore, QtGui
-import interfaccia
+import interfaccia, csv, datetime
 from CsvTableModelClass import CsvTableModel
-import csv
-import datetime
 
 def InizializzaDati():
     modelClienti = CsvTableModel(cwd + "/clienti.csv")
@@ -18,6 +16,11 @@ def InizializzaDati():
     ui.AcceptButton.clicked.connect(SalvaDati)
 
 def SalvaDati():
+    if ui.lineEdit_Riferimento.text() == "":
+        qm = QtWidgets.QMessageBox
+        question = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
+        return
+
     nomeFile = str(cwd + "/" + ui.lineEdit_Riferimento.text() + ".csv")
     if not os.path.exists(nomeFile):
         open(nomeFile, "w")
