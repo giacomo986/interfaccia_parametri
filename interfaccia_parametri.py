@@ -1,7 +1,8 @@
 import sys, os
 from PyQt5 import QtWidgets, QtCore, QtGui
-import interfaccia, csv, datetime
-from CsvTableModelClass import CsvTableModel
+import resources.interfaccia as interfaccia
+import csv, datetime
+from resources.CsvTableModelClass import CsvTableModel
 
 def InizializzaDati():
     modelClienti = CsvTableModel(cwd + "/clienti.csv")
