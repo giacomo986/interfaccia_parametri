@@ -5,11 +5,11 @@ import csv, datetime
 from resources.CsvTableModelClass import CsvTableModel
 
 def InizializzaDati():
-    modelClienti = CsvTableModel(cwd + "/clienti.csv")
+    modelClienti = CsvTableModel(cwd + "/interfaccia_parametri/resources/clienti.csv")
     for element in range(0, modelClienti.NumbersOfRows()):
         ui.comboBox_Cliente.addItem(modelClienti.getCell(element, 0), modelClienti.getCell(element, 1))
     
-    modelMateriali = CsvTableModel(cwd + "/materiali.csv")
+    modelMateriali = CsvTableModel(cwd + "/interfaccia_parametri//resources/materiali.csv")
     for element in range(0, modelMateriali.NumbersOfRows()):
         ui.comboBox_Materiale.addItem(modelMateriali.getCell(element, 0), modelMateriali.getCell(element, 1))
 
