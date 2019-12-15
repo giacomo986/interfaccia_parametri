@@ -65,11 +65,12 @@ def SalvaDati():
     qm.information(None, "Informazione", "File salvato.")
 
 def ChiudiApplicazione():
-    QtCore.QCoreApplication.instance().quit()
+    Form.close()
+    #QtCore.QCoreApplication.instance().quit()
 
 if __name__ == "__main__":
     cwd = os.getcwd()
-    app = QtWidgets.QApplication(sys.argv)
+    #app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
     ui = interfaccia.Ui_Form()
     ui.setupUi(Form)
