@@ -1,4 +1,7 @@
 # interfaccia_parametri
+
+Obiettivo:
+
 Finestra per la compilazione di dati da salvare su foglio excel e database
 
 Struttura della finestra:
@@ -23,3 +26,9 @@ Aggiungere salvataggio del file su percorso prestabilito, con creazione sottocar
 Estrae immediatamente i dati e li immette nel database
 
 Meglio gestire prima creazione e modifica con un unico tasto, quindi unica macro
+
+Installazione:
+
+- Copiare il contenuto del repository all'interno della cartella macro di freecad
+- Installare PyQT5 con il comando: pip install PyQT5
+- Installare MySQL Python Connector con il comando: pip install mysql-connector-python
