@@ -1,0 +1,129 @@
+import sys, os
+from PySide2 import QtWidgets, QtCore, QtGui
+import resources.interfaccia as interfaccia
+import csv, datetime
+from resources.CsvTableModelClass import CsvTableModel
+
+def InizializzaDati():
+    modelClienti = CsvTableModel(cwd + "/resources/clienti.csv")
+    for element in range(0, modelClienti.NumbersOfRows()):
+        ui.comboBox_Cliente.addItem(modelClienti.getCell(element, 0), modelClienti.getCell(element, 1))
+    
+    modelMateriali = CsvTableModel(cwd + "/resources/materiali.csv")
+    for element in range(0, modelMateriali.NumbersOfRows()):
+        ui.comboBox_Materiale.addItem(modelMateriali.getCell(element, 0), modelMateriali.getCell(element, 1))
+
+    aggiungiBoundBox()
+    
+    ui.CancelButton.clicked.connect(ChiudiApplicazione)
+    ui.AcceptButton.clicked.connect(SalvaDati)
+
+def aggiungiBoundBox():
+    objs = FreeCADGui.Selection.getSelection()
+    s = objs[0].Shape
+    boundBox_= s.BoundBox
+
+    ui.comboBox_MisuraMax.addItem("lunghezza asse x: " + str(boundBox_.XLength), boundBox_.XLength)
+    ui.comboBox_MisuraMax.addItem("lunghezza asse y: " + str(boundBox_.YLength), boundBox_.YLength)
+    ui.comboBox_MisuraMax.addItem("lunghezza asse z: " + str(boundBox_.ZLength), boundBox_.ZLength)
+
+def SalvaDati():
+    if ui.lineEdit_Riferimento.text() == "":
+        qm = QtWidgets.QMessageBox
+        question = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
+        return
+
+    filePath = cwd + "/resources/" + ui.comboBox_Cliente.currentText()
+
+    os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
+
+    nomeFile = str(filePath + "/" + ui.lineEdit_Riferimento.text() + ".csv") # imposta il nome del file da salvare
+
+    if not os.path.exists(nomeFile):
+        open(nomeFile, "w")
+    else:
+        qm = QtWidgets.QMessageBox
+        question = qm.question(None, "File già esistente", "File già esistente. Vuoi sovrascrivere il file?", qm.Yes | qm.No)
+        if (question == qm.No):
+            qm.information(None, "Informazione", "Nessuna modifica")
+            return
+
+    scriviCSV(nomeFile)
+
+    qm = QtWidgets.QMessageBox
+    qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
+
+    qm = QtWidgets.QMessageBox
+    question = qm.question(None, "Salvataggio du database", "Si desidera salvare i dati su database?", qm.Yes | qm.No)
+    if (question == qm.No):
+        qm.information(None, "Informazione", "Nessuna aggiunta al database")
+        return
+    else:
+        import resources.database.database as database
+        database.connetti()
+        database.inserisci_riga((ui.lineEdit_Riferimento.text(),
+                                ui.lineEdit_CodicePadre.text(),
+                                ui.lineEdit_Macchina.text(),
+                                ui.comboBox_Materiale.currentText(),
+                                ui.comboBox_Denominazione.currentText(),
+                                datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                ui.lineEdit_Nome.text(),
+                                ui.lineEdit_Codice.text(),
+                                ui.comboBox_Cliente.currentText(),
+                                int(ui.lineEdit_Quantita.text()),
+                                ui.comboBox_MisuraMax.currentData(),
+                                int(ui.lineEdit_Massa.text())))
+
+    ChiudiApplicazione()
+
+def scriviCSV(nomeFile):
+    with open(nomeFile, "w", newline="") as csvfile:
+        writer = csv.writer(csvfile, delimiter=",")
+        writer.writerow(["Riferimento"] +
+                        ["Codice padre"] +
+                        ["Macchina"] +
+                        ["Materiale"] +
+                        ["Denominazione profilo"] +
+                        ["Data di creazione"] +
+                        ["Nome"] +
+                        ["Codice"] +
+                        ["Cliente"] +
+                        ["Q.tà per Disegno"] +
+                        ["Misura di massima"] +
+                        ["Massa"])
+
+        writer.writerow([ui.lineEdit_Riferimento.text()] +
+                        [ui.lineEdit_CodicePadre.text()] +
+                        [ui.lineEdit_Macchina.text()] +
+                        [ui.comboBox_Materiale.currentText()] +
+                        [ui.comboBox_Denominazione.currentText()] +
+                        [datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")] +
+                        [ui.lineEdit_Nome.text()] +
+                        [ui.lineEdit_Codice.text()] +
+                        [ui.comboBox_Cliente.currentText()] +
+                        [ui.lineEdit_Quantita.text()] +
+                        [ui.comboBox_MisuraMax.currentData()] +
+                        [ui.lineEdit_Massa.text()])
+
+def ChiudiApplicazione():
+    Form.close()
+    
+# La macro comincia verificando se è stato selezionato un solido da cui estrapolare le dimensioni
+objs = FreeCADGui.Selection.getSelection()
+
+if len(objs) >= 1:
+    if hasattr(objs[0], "Shape"): # Se il primo oggetto della selezione è un solido allora la macro richiama la finestra
+        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Macro")
+        cwd = p.GetString("MacroPath")
+        Form = QtWidgets.QWidget()
+        ui = interfaccia.Ui_Form()
+        ui.setupUi(Form)
+        InizializzaDati()
+        Form.show()
+    else:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Nessun solido selezionato", "Per avviare la macro è necessario selezionare un solido")
+		#App.Console.PrintMessage("Selezionare un solido. \n\n")
+else:
+    qm = QtWidgets.QMessageBox
+    qm.information(None, "Nessun solido selezionato", "Per avviare la macro è necessario selezionare un solido")

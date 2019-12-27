@@ -1,4 +1,4 @@
-from PyQt5 import QtCore
+from PySide2 import QtCore
 import csv
 
 
@@ -41,7 +41,7 @@ class CsvTableModel(QtCore.QAbstractTableModel):
 
     def headerData(self, section, orientation, role):
 
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+        if orientation == QtCore.Qt.Horizontal and role == PyQt5.QtCore.Qt.DisplayRole:
             return self._headers[section]
         else:
             return super().headerData(section, orientation, role)

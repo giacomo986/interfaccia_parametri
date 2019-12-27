@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 
 class Ui_Form(object):
@@ -58,9 +58,9 @@ class Ui_Form(object):
         self.lineEdit_Codice = QtWidgets.QLineEdit(Form)
         self.lineEdit_Codice.setObjectName("lineEdit_Codice")
         self.gridLayout.addWidget(self.lineEdit_Codice, 7, 6, 1, 1)
-        self.lineEdit_MisuraMax = QtWidgets.QLineEdit(Form)
-        self.lineEdit_MisuraMax.setObjectName("lineEdit_MisuraMax")
-        self.gridLayout.addWidget(self.lineEdit_MisuraMax, 10, 6, 1, 1)
+        self.comboBox_MisuraMax = QtWidgets.QComboBox(Form)
+        self.comboBox_MisuraMax.setObjectName("comboBox_MisuraMax")
+        self.gridLayout.addWidget(self.comboBox_MisuraMax, 10, 6, 1, 1)
         self.comboBox_Cliente = QtWidgets.QComboBox(Form)
         self.comboBox_Cliente.setObjectName("comboBox_Cliente")
         self.gridLayout.addWidget(self.comboBox_Cliente, 8, 6, 1, 1)
@@ -100,7 +100,7 @@ class Ui_Form(object):
         self.gridLayout.addLayout(self.horizontalLayout, 12, 6, 1, 1)
 
         self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
+        #QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
@@ -120,7 +120,7 @@ class Ui_Form(object):
         self.lineEdit_Quantita.setToolTip(_translate("Form", "valore numerico, default 1, editabile"))
         self.lineEdit_Quantita.setText(_translate("Form", "1"))
         self.lineEdit_Codice.setToolTip(_translate("Form", "ridondante (facoltativo)"))
-        self.lineEdit_MisuraMax.setToolTip(_translate("Form", "automatiche, vedi box ingombro (orientamento sempre uguale)"))
+        self.comboBox_MisuraMax.setToolTip(_translate("Form", "automatiche, vedi box ingombro (orientamento sempre uguale)"))
         self.comboBox_Cliente.setToolTip(_translate("Form", "associare a tabella esterna editabile"))
         self.comboBox_Materiale.setToolTip(_translate("Form", "FERRO, INOX (legato a densità) associare a tabella esterna editabile"))
         self.label_8.setText(_translate("Form", "Codice:"))
