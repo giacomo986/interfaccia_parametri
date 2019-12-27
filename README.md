@@ -32,8 +32,8 @@ Meglio gestire prima creazione e modifica con un unico tasto, quindi unica macro
 ## Installazione:
 
 - Copiare il contenuto del repository all'interno della cartella macro di freecad
-- Installare PyQT5 con il comando: 
+- Installare PyQT5 con il comando:
 ```python
 pip install PyQT5
 ```
-- Installare MySQL Python Connector con il comando: pip install mysql-connector-python
+- Installare MySQL Python Connector con il comando: ```python pip install mysql-connector-python ```
