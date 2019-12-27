@@ -36,4 +36,7 @@ Meglio gestire prima creazione e modifica con un unico tasto, quindi unica macro
 ```python
 pip install PyQT5
 ```
-- Installare MySQL Python Connector con il comando: ```python pip install mysql-connector-python ```
+- Installare MySQL Python Connector con il comando:
+```python
+pip install mysql-connector-python
+```
