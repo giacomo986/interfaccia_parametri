@@ -11,21 +11,39 @@ def InizializzaDati():
     
     modelMateriali = CsvTableModel(cwd + "/resources/materiali.csv")
     for element in range(0, modelMateriali.NumbersOfRows()):
-        ui.comboBox_Materiale.addItem(modelMateriali.getCell(element, 0), modelMateriali.getCell(element, 1))
-
+        nome_materiale = modelMateriali.getCell(element, 0)
+        peso_specifico = modelMateriali.getCell(element, 1)
+        ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", peso_specifico)
+    
+    ui.comboBox_Materiale.currentIndexChanged.connect(impostaMassa)
+    impostaMassa()
+    
+    ui.DateTimeEdit_Data.setDateTime(datetime.datetime.now())
+    
     aggiungiBoundBox()
     
     ui.CancelButton.clicked.connect(ChiudiApplicazione)
     ui.AcceptButton.clicked.connect(SalvaDati)
+
+def impostaMassa():
+    peso_specifico = ui.comboBox_Materiale.currentData()
+    ui.lineEdit_Massa.setText(str(calcolaMassa(peso_specifico)))
+
+def calcolaMassa(peso_specifico):
+    objs = FreeCADGui.Selection.getSelection()
+    s = objs[0].Shape
+    Volume = s.Volume # il volume è espresso in mm³
+    Massa = round(float(peso_specifico) * (Volume / 1000.0), 3) # il peso specifico è espesso in g/cm³
+    return Massa
 
 def aggiungiBoundBox():
     objs = FreeCADGui.Selection.getSelection()
     s = objs[0].Shape
     boundBox_= s.BoundBox
 
-    ui.comboBox_MisuraMax.addItem("lunghezza asse x: " + str(boundBox_.XLength), boundBox_.XLength)
-    ui.comboBox_MisuraMax.addItem("lunghezza asse y: " + str(boundBox_.YLength), boundBox_.YLength)
-    ui.comboBox_MisuraMax.addItem("lunghezza asse z: " + str(boundBox_.ZLength), boundBox_.ZLength)
+    ui.comboBox_MisuraMax.addItem("lunghezza asse x: " + str(round(boundBox_.XLength, 3)), boundBox_.XLength)
+    ui.comboBox_MisuraMax.addItem("lunghezza asse y: " + str(round(boundBox_.YLength, 3)), boundBox_.YLength)
+    ui.comboBox_MisuraMax.addItem("lunghezza asse z: " + str(round(boundBox_.ZLength, 3)), boundBox_.ZLength)
 
 def SalvaDati():
     if ui.lineEdit_Riferimento.text() == "":
@@ -66,7 +84,7 @@ def SalvaDati():
                                 ui.lineEdit_Macchina.text(),
                                 ui.comboBox_Materiale.currentText(),
                                 ui.comboBox_Denominazione.currentText(),
-                                datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
                                 ui.lineEdit_Nome.text(),
                                 ui.lineEdit_Codice.text(),
                                 ui.comboBox_Cliente.currentText(),
@@ -97,7 +115,7 @@ def scriviCSV(nomeFile):
                         [ui.lineEdit_Macchina.text()] +
                         [ui.comboBox_Materiale.currentText()] +
                         [ui.comboBox_Denominazione.currentText()] +
-                        [datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")] +
+                        [ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S")] +
                         [ui.lineEdit_Nome.text()] +
                         [ui.lineEdit_Codice.text()] +
                         [ui.comboBox_Cliente.currentText()] +
