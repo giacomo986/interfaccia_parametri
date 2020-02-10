@@ -5,15 +5,18 @@ import csv, datetime
 from resources.CsvTableModelClass import CsvTableModel
 
 def InizializzaDati():
-    modelClienti = CsvTableModel(cwd + "/resources/clienti.csv")
-    for element in range(0, modelClienti.NumbersOfRows()):
-        ui.comboBox_Cliente.addItem(modelClienti.getCell(element, 0), modelClienti.getCell(element, 1))
+
+    clienti = leggiCSV(cwd + "/resources/clienti.csv")
+    for element in clienti:
+        ui.comboBox_Cliente.addItem(element[0], element[1])
     
-    modelMateriali = CsvTableModel(cwd + "/resources/materiali.csv")
-    for element in range(0, modelMateriali.NumbersOfRows()):
-        nome_materiale = modelMateriali.getCell(element, 0)
-        peso_specifico = modelMateriali.getCell(element, 1)
+    materiali = leggiCSV(cwd + "/resources/materiali.csv")
+    for element in materiali:
+        nome_materiale = element[0]
+        peso_specifico = element[1]
         ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", peso_specifico)
+
+      ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", peso_specifico)
     
     ui.comboBox_Materiale.currentIndexChanged.connect(impostaMassa)
     impostaMassa()
@@ -94,8 +97,8 @@ def SalvaDati():
 
     ChiudiApplicazione()
 
-def scriviCSV(nomeFile):
-    with open(nomeFile, "w", newline="") as csvfile:
+def scriviCSV(PercorsoFile):
+    with open(PercorsoFile, "w", newline="") as csvfile:
         writer = csv.writer(csvfile, delimiter=",")
         writer.writerow(["Riferimento"] +
                         ["Codice padre"] +
@@ -122,6 +125,27 @@ def scriviCSV(nomeFile):
                         [ui.lineEdit_Quantita.text()] +
                         [ui.comboBox_MisuraMax.currentData()] +
                         [ui.lineEdit_Massa.text()])
+
+def leggiCSV(PercorsoFile):
+    lista = []
+    with open(PercorsoFile, "r") as csvfile:
+        reader = csv.reader(csvfile, delimiter=",")
+        next(reader)
+        for row in reader:
+            lista.append(row)
+
+    return lista
+
+def crea_spreadsheet():
+    import Spreadsheet
+    global sheet
+    sheet = App.ActiveDocument.addObject("Spreadsheet::Sheet")
+    sheet.Label = ui.lineEdit_Riferimento.text()
+    sheet.set('A2', 'a')
+    
+    App.ActiveDocument.recompute()
+
+
 
 def ChiudiApplicazione():
     Form.close()
