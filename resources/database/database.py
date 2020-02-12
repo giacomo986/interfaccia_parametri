@@ -1,16 +1,20 @@
 import mysql.connector as mariadb
+import json
 
-
-config = {
+'''config = {
   'user': 'freecad',
   'password': 'freecad',
   'host': '127.0.0.1',
   'database': 'dbpezzi',
   'raise_on_warnings': True
-}
+}'''
 
-def connetti():
+def connetti(cwd):
   global mariadb_connection, cursor
+
+  with open(cwd + "/resources/database/config.json", "r") as read_file:
+    config = json.load(read_file)
+
   mariadb_connection = mariadb.connect(**config)
   cursor = mariadb_connection.cursor(buffered=True)
   verifica_tabella_database()
@@ -32,8 +36,8 @@ def Crea_tabella():
                   "   codice TEXT NOT NULL,"
                   "   cliente TEXT NOT NULL,"
                   "   quantità_per_disegno INT NOT NULL,"
-                  "   misura_di_massima INT NOT NULL,"
-                  "   massa INT NOT NULL"
+                  "   misura_di_massima FLOAT NOT NULL,"
+                  "   massa FLOAT NOT NULL"
                   ")  ENGINE=INNODB;")
 
 def inserisci_riga(dati):
@@ -49,4 +53,3 @@ def verifica_tabella_database():
   tabella = cursor.fetchone()
   if not tabella:
     Crea_tabella()
-# dati_tubo = ('a', 'b', 'c', 'd', 'e', '2019-12-10', 'g', 'h', '1', 'l', 'i', '5')

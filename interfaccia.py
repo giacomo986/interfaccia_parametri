@@ -1,7 +1,7 @@
 import sys, os
 from PySide2 import QtWidgets, QtCore, QtGui
 import resources.interfaccia as interfaccia
-import csv, datetime
+import csv, datetime, Spreadsheet
 from resources.CsvTableModelClass import CsvTableModel
 
 def InizializzaDati():
@@ -16,8 +16,6 @@ def InizializzaDati():
         peso_specifico = element[1]
         ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", peso_specifico)
 
-      ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", peso_specifico)
-    
     ui.comboBox_Materiale.currentIndexChanged.connect(impostaMassa)
     impostaMassa()
     
@@ -49,39 +47,46 @@ def aggiungiBoundBox():
     ui.comboBox_MisuraMax.addItem("lunghezza asse z: " + str(round(boundBox_.ZLength, 3)), boundBox_.ZLength)
 
 def SalvaDati():
+
     if ui.lineEdit_Riferimento.text() == "":
         qm = QtWidgets.QMessageBox
         question = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
         return
 
-    filePath = cwd + "/resources/" + ui.comboBox_Cliente.currentText()
+    sheet = crea_spreadsheet()
+    popola_spreadsheet(sheet)
 
-    os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
-
-    nomeFile = str(filePath + "/" + ui.lineEdit_Riferimento.text() + ".csv") # imposta il nome del file da salvare
-
-    if not os.path.exists(nomeFile):
-        open(nomeFile, "w")
+    qm = QtWidgets.QMessageBox
+    question = qm.question(None, "Esportazione in CSV", "Si desidera esportare in dati in formato CSV?", qm.Yes | qm.No)
+    if (question == qm.No):
+        qm.information(None, "Informazione", "Nessuna esportazione")
     else:
+        filePath = cwd + "/resources/" + ui.comboBox_Cliente.currentText()
+
+        os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
+
+        nomeFile = str(filePath + "/" + ui.lineEdit_Riferimento.text() + ".csv") # imposta il nome del file da salvare
+
+        if not os.path.exists(nomeFile):
+            open(nomeFile, "w")
+        else:
+            qm = QtWidgets.QMessageBox
+            question = qm.question(None, "File già esistente", "File già esistente. Vuoi sovrascrivere il file?", qm.Yes | qm.No)
+            if (question == qm.No):
+                qm.information(None, "Informazione", "Nessuna modifica")
+
+        scriviCSV(nomeFile)
+
         qm = QtWidgets.QMessageBox
-        question = qm.question(None, "File già esistente", "File già esistente. Vuoi sovrascrivere il file?", qm.Yes | qm.No)
-        if (question == qm.No):
-            qm.information(None, "Informazione", "Nessuna modifica")
-            return
-
-    scriviCSV(nomeFile)
+        qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
 
     qm = QtWidgets.QMessageBox
-    qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
-
-    qm = QtWidgets.QMessageBox
-    question = qm.question(None, "Salvataggio du database", "Si desidera salvare i dati su database?", qm.Yes | qm.No)
+    question = qm.question(None, "Salvataggio su database", "Si desidera salvare i dati su database?", qm.Yes | qm.No)
     if (question == qm.No):
         qm.information(None, "Informazione", "Nessuna aggiunta al database")
-        return
     else:
         import resources.database.database as database
-        database.connetti()
+        database.connetti(cwd)
         database.inserisci_riga((ui.lineEdit_Riferimento.text(),
                                 ui.lineEdit_CodicePadre.text(),
                                 ui.lineEdit_Macchina.text(),
@@ -93,7 +98,7 @@ def SalvaDati():
                                 ui.comboBox_Cliente.currentText(),
                                 int(ui.lineEdit_Quantita.text()),
                                 ui.comboBox_MisuraMax.currentData(),
-                                int(ui.lineEdit_Massa.text())))
+                                float(ui.lineEdit_Massa.text())))
 
     ChiudiApplicazione()
 
@@ -137,19 +142,59 @@ def leggiCSV(PercorsoFile):
     return lista
 
 def crea_spreadsheet():
-    import Spreadsheet
-    global sheet
     sheet = App.ActiveDocument.addObject("Spreadsheet::Sheet")
     sheet.Label = ui.lineEdit_Riferimento.text()
-    sheet.set('A2', 'a')
-    
-    App.ActiveDocument.recompute()
+    return sheet
 
+def popola_spreadsheet(sheet):
+    sheet.set("A1", "Riferimento:")
+    sheet.set("B1", ui.lineEdit_Riferimento.text())
 
+    sheet.set("A2", "Codice padre:")
+    sheet.set("B2", ui.lineEdit_CodicePadre.text())
+
+    sheet.set("A3", "Macchina:")
+    sheet.set("B3", ui.lineEdit_Macchina.text())
+
+    sheet.set("A4", "Materiale:")
+    sheet.set("B4", ui.comboBox_Materiale.currentText())
+
+    sheet.set("A5", "Denominazione profilo:")
+    sheet.set("B5", ui.comboBox_Denominazione.currentText())
+
+    sheet.set("A6", "Data di creazione:")
+    sheet.set("B6", ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"))
+
+    sheet.set("A7", "Nome:")
+    sheet.set("B7", ui.lineEdit_Nome.text())
+
+    sheet.set("A8", "Codice:")
+    sheet.set("B8", ui.lineEdit_Codice.text())
+
+    sheet.set("A9", "Cliente:")
+    sheet.set("B9", ui.comboBox_Cliente.currentText())
+
+    sheet.set("A10", "Q.tà per Disegno:")
+    sheet.set("B10", ui.lineEdit_Quantita.text())
+
+    sheet.set("A11", "Misura di massima:")
+    sheet.set("B11", str(ui.comboBox_MisuraMax.currentData()))
+
+    sheet.set("A12", "Massa:")
+    sheet.set("B12", ui.lineEdit_Massa.text())
+
+    sheet.setAlignment("A1:A12", "right|vcenter|vimplied")
+    sheet.setAlignment("B1:B20", "center|vcenter|vimplied")
+    sheet.recompute()
 
 def ChiudiApplicazione():
     Form.close()
-    
+
+
+########################################
+######## Punto d'ingresso macro ########
+########################################
+
 # La macro comincia verificando se è stato selezionato un solido da cui estrapolare le dimensioni
 objs = FreeCADGui.Selection.getSelection()
 
@@ -165,7 +210,6 @@ if len(objs) >= 1:
     else:
         qm = QtWidgets.QMessageBox
         qm.information(None, "Nessun solido selezionato", "Per avviare la macro è necessario selezionare un solido")
-		#App.Console.PrintMessage("Selezionare un solido. \n\n")
 else:
     qm = QtWidgets.QMessageBox
     qm.information(None, "Nessun solido selezionato", "Per avviare la macro è necessario selezionare un solido")
