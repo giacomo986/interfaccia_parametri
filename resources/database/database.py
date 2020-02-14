@@ -37,13 +37,14 @@ def Crea_tabella():
                   "   cliente TEXT NOT NULL,"
                   "   quantità_per_disegno INT NOT NULL,"
                   "   misura_di_massima FLOAT NOT NULL,"
-                  "   massa FLOAT NOT NULL"
+                  "   massa FLOAT NOT NULL,"
+                  "   percorso TEXT NOT NULL"
                   ")  ENGINE=INNODB;")
 
 def inserisci_riga(dati):
   campi_tubo = ("INSERT INTO tubi "
-                "(riferimento, codice_padre, macchina, materiale, denominazione_profilo, data_creazione, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa)"
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+                "(riferimento, codice_padre, macchina, materiale, denominazione_profilo, data_creazione, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso)"
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
   cursor.execute(campi_tubo, dati)
   mariadb_connection.commit()

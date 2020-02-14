@@ -98,7 +98,9 @@ def SalvaDati():
                                 ui.comboBox_Cliente.currentText(),
                                 int(ui.lineEdit_Quantita.text()),
                                 ui.comboBox_MisuraMax.currentData(),
-                                float(ui.lineEdit_Massa.text())))
+                                float(ui.lineEdit_Massa.text()),
+                                str(cwd + "/resources/" + ui.comboBox_Cliente.currentText() + "/" + ui.lineEdit_Riferimento.text() + ".csv"))
+                                )
 
     ChiudiApplicazione()
 
