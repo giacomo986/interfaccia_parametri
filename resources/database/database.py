@@ -4,7 +4,7 @@ import json
 def connetti(cwd):
   global mariadb_connection, cursor
 
-  with open(cwd + "/resources/database/config.json", "r") as read_file:
+  with open(cwd + "/resources/database/db_config.json", "r") as read_file:
     config = json.load(read_file)
 
   mariadb_connection = mariadb.connect(**config)

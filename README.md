@@ -34,11 +34,11 @@ Meglio gestire prima creazione e modifica con un unico tasto, quindi unica macro
 - Copiare il contenuto del repository all'interno della cartella macro di freecad
 - Installare PyQT5 con il comando:
 ```python
-pip install PyQT5
+pip3 install PyQT5
 ```
 - Installare MySQL Python Connector con il comando:
 ```python
-pip install mysql-connector-python
+pip3 install mysql-connector-python
 ```
 
 ## TODO list:
@@ -47,4 +47,4 @@ pip install mysql-connector-python
 - Funzione di estrazione dati da database
 - Maschera per la ricerca dei pezzi tramite database
 - Funzione di riconoscimento revisioni vecchie da cancellare dal database (mantenere il file)
-- Funzione di eliminazione manuale dei pezzi
+- Funzione e maschera per eliminazione manuale dei pezzi dal database
