@@ -1,0 +1,41 @@
+import Spreadsheet
+sheet = App.ActiveDocument.addObject("Spreadsheet::Sheet")
+sheet.Label = "Dimensions"
+
+
+App.getDocument("ciambella").saveAs(u"/home/giacomo/prova.FCStd")
+
+mysql -h 172.17.0.2 -u freecad -p DBTubi
+
+App.activeDocument().saveAs(u"/home/giacomo/puzzone.FCStd")
+
+
+'''
+def scriviCSV(PercorsoFile):
+    with open(PercorsoFile, "w", newline="") as csvfile:
+        writer = csv.writer(csvfile, delimiter=",")
+        writer.writerow(["Riferimento"] +
+                        ["Codice padre"] +
+                        ["Macchina"] +
+                        ["Materiale"] +
+                        ["Denominazione profilo"] +
+                        ["Data di creazione"] +
+                        ["Nome"] +
+                        ["Codice"] +
+                        ["Cliente"] +
+                        ["Q.tà per Disegno"] +
+                        ["Misura di massima"] +
+                        ["Massa"])
+
+        writer.writerow([ui.lineEdit_Riferimento.text()] +
+                        [ui.lineEdit_CodicePadre.text()] +
+                        [ui.lineEdit_Macchina.text()] +
+                        [ui.comboBox_Materiale.currentText()] +
+                        [ui.comboBox_Denominazione.currentText()] +
+                        [ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S")] +
+                        [ui.lineEdit_Nome.text()] +
+                        [ui.lineEdit_Codice.text()] +
+                        [ui.comboBox_Cliente.currentText()] +
+                        [ui.lineEdit_Quantita.text()] +
+                        [ui.comboBox_MisuraMax.currentData()] +
+                        [ui.lineEdit_Massa.text()])'''

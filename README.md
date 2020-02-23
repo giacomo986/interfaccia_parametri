@@ -43,7 +43,7 @@ pip3 install mysql-connector-python
 
 ## TODO list:
 
-- File di configurazione con percorso di salvataggio dei file
+- ~~File di configurazione con percorso di salvataggio dei file~~
 - Funzione di estrazione dati da database
 - Maschera per la ricerca dei pezzi tramite database
 - Funzione di riconoscimento revisioni vecchie da cancellare dal database (mantenere il file)

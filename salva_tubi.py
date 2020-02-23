@@ -47,7 +47,6 @@ def aggiungiBoundBox():
     ui.comboBox_MisuraMax.addItem("lunghezza asse z: " + str(round(boundBox_.ZLength, 3)), boundBox_.ZLength)
 
 def SalvaDati():
-
     if ui.lineEdit_Riferimento.text() == "":
         qm = QtWidgets.QMessageBox
         question = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
@@ -62,6 +61,9 @@ def SalvaDati():
         qm.information(None, "Informazione", "Nessuna esportazione")
     else:
         filePath = Percorso_disegni + ui.comboBox_Cliente.currentText() + "/"
+
+        if not(ui.lineEdit_CodicePadre.text() == ""):
+            filePath = filePath + ui.lineEdit_CodicePadre.text() + "/"
 
         os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
 
@@ -90,7 +92,7 @@ def SalvaDati():
         database.inserisci_riga((ui.lineEdit_Riferimento.text(),
                                 ui.lineEdit_CodicePadre.text(),
                                 ui.lineEdit_Macchina.text(),
-                                ui.comboBox_Materiale.currentText(),
+                                str(ui.comboBox_Materiale.currentData()),
                                 ui.comboBox_Denominazione.currentText(),
                                 ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
                                 ui.lineEdit_Nome.text(),
@@ -103,35 +105,6 @@ def SalvaDati():
                                 )
 
     ChiudiApplicazione()
-'''
-def scriviCSV(PercorsoFile):
-    with open(PercorsoFile, "w", newline="") as csvfile:
-        writer = csv.writer(csvfile, delimiter=",")
-        writer.writerow(["Riferimento"] +
-                        ["Codice padre"] +
-                        ["Macchina"] +
-                        ["Materiale"] +
-                        ["Denominazione profilo"] +
-                        ["Data di creazione"] +
-                        ["Nome"] +
-                        ["Codice"] +
-                        ["Cliente"] +
-                        ["Q.tà per Disegno"] +
-                        ["Misura di massima"] +
-                        ["Massa"])
-
-        writer.writerow([ui.lineEdit_Riferimento.text()] +
-                        [ui.lineEdit_CodicePadre.text()] +
-                        [ui.lineEdit_Macchina.text()] +
-                        [ui.comboBox_Materiale.currentText()] +
-                        [ui.comboBox_Denominazione.currentText()] +
-                        [ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S")] +
-                        [ui.lineEdit_Nome.text()] +
-                        [ui.lineEdit_Codice.text()] +
-                        [ui.comboBox_Cliente.currentText()] +
-                        [ui.lineEdit_Quantita.text()] +
-                        [ui.comboBox_MisuraMax.currentData()] +
-                        [ui.lineEdit_Massa.text()])'''
 
 def leggiCSV(PercorsoFile):
     lista = []
@@ -159,7 +132,7 @@ def popola_spreadsheet(sheet):
     sheet.set("B3", ui.lineEdit_Macchina.text())
 
     sheet.set("A4", "Materiale:")
-    sheet.set("B4", ui.comboBox_Materiale.currentText())
+    sheet.set("B4", str(ui.comboBox_Materiale.currentData()))
 
     sheet.set("A5", "Denominazione profilo:")
     sheet.set("B5", ui.comboBox_Denominazione.currentText())
