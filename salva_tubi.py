@@ -1,7 +1,7 @@
 import sys, os
 from PySide2 import QtWidgets, QtCore, QtGui
-import resources.interfaccia as interfaccia
-import csv, datetime, Spreadsheet
+import resources.finestra_salva as interfaccia
+import csv, datetime, Spreadsheet, json
 from resources.CsvTableModelClass import CsvTableModel
 
 def InizializzaDati():
@@ -57,15 +57,15 @@ def SalvaDati():
     popola_spreadsheet(sheet)
 
     qm = QtWidgets.QMessageBox
-    question = qm.question(None, "Esportazione in CSV", "Si desidera esportare in dati in formato CSV?", qm.Yes | qm.No)
+    question = qm.question(None, "Esportazione in FCStd", "Si desidera esportare il disegno in formato FCStd?", qm.Yes | qm.No)
     if (question == qm.No):
         qm.information(None, "Informazione", "Nessuna esportazione")
     else:
-        filePath = cwd + "/resources/" + ui.comboBox_Cliente.currentText()
+        filePath = Percorso_disegni + ui.comboBox_Cliente.currentText() + "/"
 
         os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
 
-        nomeFile = str(filePath + "/" + ui.lineEdit_Riferimento.text() + ".csv") # imposta il nome del file da salvare
+        nomeFile = str(filePath + ui.lineEdit_Riferimento.text() + ".FCStd") # imposta il nome del file da salvare
 
         if not os.path.exists(nomeFile):
             open(nomeFile, "w")
@@ -75,7 +75,7 @@ def SalvaDati():
             if (question == qm.No):
                 qm.information(None, "Informazione", "Nessuna modifica")
 
-        scriviCSV(nomeFile)
+        Documento.saveAs(nomeFile)
 
         qm = QtWidgets.QMessageBox
         qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
@@ -103,7 +103,7 @@ def SalvaDati():
                                 )
 
     ChiudiApplicazione()
-
+'''
 def scriviCSV(PercorsoFile):
     with open(PercorsoFile, "w", newline="") as csvfile:
         writer = csv.writer(csvfile, delimiter=",")
@@ -131,7 +131,7 @@ def scriviCSV(PercorsoFile):
                         [ui.comboBox_Cliente.currentText()] +
                         [ui.lineEdit_Quantita.text()] +
                         [ui.comboBox_MisuraMax.currentData()] +
-                        [ui.lineEdit_Massa.text()])
+                        [ui.lineEdit_Massa.text()])'''
 
 def leggiCSV(PercorsoFile):
     lista = []
@@ -199,11 +199,21 @@ def ChiudiApplicazione():
 
 # La macro comincia verificando se è stato selezionato un solido da cui estrapolare le dimensioni
 objs = FreeCADGui.Selection.getSelection()
-
 if len(objs) >= 1:
     if hasattr(objs[0], "Shape"): # Se il primo oggetto della selezione è un solido allora la macro richiama la finestra
+        
+        # Cerca la cartella dove sono situate le macro e salva il percorso.
         p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Macro")
         cwd = p.GetString("MacroPath")
+
+        # apre il file di configurazione che contiene il percorso di salvataggio dei disegni
+        with open(cwd + "/resources/macro_config.json", "r") as read_file:
+            config = json.load(read_file)
+        Percorso_disegni = config["Percorso_disegni"]
+
+        Documento =  App.ActiveDocument # Salva un riferimento del documento aperto per comodità
+
+        # Crea la finestra
         Form = QtWidgets.QWidget()
         ui = interfaccia.Ui_Form()
         ui.setupUi(Form)
