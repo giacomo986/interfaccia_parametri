@@ -15,8 +15,14 @@ class Ui_Form(object):
 
         reg_ex = QtCore.QRegExp(r"[-+]?[0-9]*\.?[0-9]+") # Regular Expression per filtrare solo valori numerici dove necessario
 
-        self.gridLayout = QtWidgets.QGridLayout(Form)
-        
+        self.verticalLayout = QtWidgets.QVBoxLayout(Form)
+
+        self.tableView = QtWidgets.QTableView(Form)
+        #self.tableview.setSortingEnabled(True)
+
+        self.verticalLayout.addWidget(self.tableView)
+        self.gridLayout = QtWidgets.QGridLayout()
+
         self.label_4 = QtWidgets.QLabel(Form)
         self.gridLayout.addWidget(self.label_4, 3, 0, 1, 1)
 
@@ -104,6 +110,7 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.AcceptButton)
 
         self.gridLayout.addLayout(self.horizontalLayout, 12, 6, 1, 1)
+        self.verticalLayout.addLayout(self.gridLayout)
 
         self.retranslateUi(Form)
 
@@ -134,6 +141,6 @@ class Ui_Form(object):
         self.label_6.setText(_translate("Form", "Data di creazione:"))
         self.label_10.setText(_translate("Form", "Q.tà per Disegno:"))
         self.label_11.setText(_translate("Form", "Misura di massima:"))
-        self.CancelButton.setText(_translate("Form", "Annulla"))
-        self.AcceptButton.setText(_translate("Form", "Conferma"))
+        self.CancelButton.setText(_translate("Form", "Chiudi"))
+        self.AcceptButton.setText(_translate("Form", "Cerca"))
 

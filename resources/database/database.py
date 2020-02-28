@@ -46,3 +46,5 @@ def verifica_tabella_database():
   tabella = cursor.fetchone()
   if not tabella:
     Crea_tabella()
+
+    

@@ -2,7 +2,7 @@ import sys, os
 from PySide2 import QtWidgets, QtCore, QtGui
 import resources.finestra_salva as interfaccia
 import csv, datetime, Spreadsheet, json
-from resources.CsvTableModelClass import CsvTableModel
+#from resources.CsvTableModelClass import CsvTableModel
 
 def InizializzaDati():
 
