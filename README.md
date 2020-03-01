@@ -90,6 +90,17 @@ https://hub.docker.com/_/mariadb
 
 - ~~File di configurazione con percorso di salvataggio dei file~~
 - Funzione di estrazione dati da database
-- Maschera per la ricerca dei pezzi tramite database
+- ~~Maschera per la ricerca dei pezzi tramite database~~
 - Funzione di riconoscimento revisioni vecchie da cancellare dal database (mantenere il file)
 - Funzione e maschera per eliminazione manuale dei pezzi dal database
+- gestione suffisso delle parti e gestione dell'indice di revisione
+- il nome del file originale del cliente diventa il codice padre (assieme)
+- Gestione delle eccezioni:
+    - mancata connessione al database e/o credenziali sbagliate
+    - file linkato nel database non esistente
+    - lista clienti vuota
+    - lista materiali vuota
+    - file di configurazione mancant o vuoto e illegibile
+    - percorso di salvataggio disegni non raggiungibile
+    - permessi insufficienti percorso di salvataggio
+    - permessi insufficienti database (non necessario)
