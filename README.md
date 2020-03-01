@@ -44,6 +44,10 @@ pip3 install mysql-connector-python
 ```shell
 sudo apt install docker.io
 ```
+- Abilitare l'avvio di docker all'avvio del sitema operativo:
+```shell
+sudo systemctl enable docker
+```
 - Aggiungere l'utente che esegue Docker al gruppo Docker per avere i diritti di eseguirlo. Riavviare il sistema operativo per aggiornare i diritti.
 - Scaricare Mariadb per Docker:
 ```shell
@@ -67,7 +71,7 @@ docker restart mariadbtest
 ```shell
 crontab -e
 ```
-- selezioniamo l'editor preferito e aggiungiamo la seguente riga al file di testo:
+- selezioniamo l'editor preferito e aggiungiamo la seguente riga in fondo al file di testo appena aperto:
 ```text
 @reboot docker start mariadbtest
 ```
@@ -76,7 +80,9 @@ crontab -e
 
 - Freecad 0.19: https://github.com/FreeCAD/FreeCAD/releases
 - Docker: https://www.docker.com/
-- Mariadb per docker: https://mariadb.com/kb/en/installing-and-using-mariadb-via-docker/ https://hub.docker.com/_/mariadb
+- Mariadb per docker:
+https://mariadb.com/kb/en/installing-and-using-mariadb-via-docker/
+https://hub.docker.com/_/mariadb
 - GUI per Docker: https://github.com/docker/kitematic/releases 
 - Esempi di codice Python per Mysql: https://www.w3schools.com/python/python_mysql_select.asp
 

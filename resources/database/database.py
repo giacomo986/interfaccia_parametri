@@ -53,3 +53,4 @@ def interroga_database():
   for x in risultati:
     print(x)
     print(x[13])
+  return risultati

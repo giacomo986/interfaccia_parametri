@@ -7,15 +7,24 @@ import resources.database.database as database
 
 def InizializzaDati():
     ui.CancelButton.clicked.connect(ChiudiApplicazione)
-    ui.AcceptButton.clicked.connect(recupera_dati)
+    ui.SearchButton.clicked.connect(recupera_dati)
+    ui.AcceptButton.clicked.connect(carica_documento)
 
 def ChiudiApplicazione():
     Form.close()
 
 def recupera_dati():
-        database.connetti(cwd)
-        database.interroga_database()
-        database.disconnetti()
+    global tabella
+    database.connetti(cwd)
+    tabella = database.interroga_database()
+    database.disconnetti()
+    model = CsvTableModel(filename)
+    self.tableview.setModel(self.model)
+
+def carica_documento():
+    global tabella
+    FreeCAD.openDocument(tabella[1][13])
+    ChiudiApplicazione()
 
 ########################################
 ######## Punto d'ingresso macro ########

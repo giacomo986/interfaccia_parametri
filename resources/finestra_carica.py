@@ -106,6 +106,9 @@ class Ui_Form(object):
         self.CancelButton = QtWidgets.QPushButton(Form)
         self.horizontalLayout.addWidget(self.CancelButton)
 
+        self.SearchButton = QtWidgets.QPushButton(Form)
+        self.horizontalLayout.addWidget(self.SearchButton)
+
         self.AcceptButton = QtWidgets.QPushButton(Form)
         self.horizontalLayout.addWidget(self.AcceptButton)
 
@@ -142,5 +145,6 @@ class Ui_Form(object):
         self.label_10.setText(_translate("Form", "Q.tà per Disegno:"))
         self.label_11.setText(_translate("Form", "Misura di massima:"))
         self.CancelButton.setText(_translate("Form", "Chiudi"))
-        self.AcceptButton.setText(_translate("Form", "Cerca"))
+        self.SearchButton.setText(_translate("Form", "Cerca"))
+        self.AcceptButton.setText(_translate("Form", "Carica"))
 
