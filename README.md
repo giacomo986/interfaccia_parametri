@@ -33,13 +33,52 @@ Meglio gestire prima creazione e modifica con un unico tasto, quindi unica macro
 
 - Copiare il contenuto del repository all'interno della cartella macro di freecad
 - Installare PyQT5 con il comando:
-```python
+```shell
 pip3 install PyQT5
 ```
 - Installare MySQL Python Connector con il comando:
-```python
+```shell
 pip3 install mysql-connector-python
 ```
+- Installare docker:
+```shell
+sudo apt install docker.io
+```
+- Aggiungere l'utente che esegue Docker al gruppo Docker per avere i diritti di eseguirlo. Riavviare il sistema operativo per aggiornare i diritti.
+- Scaricare Mariadb per Docker:
+```shell
+docker pull mariadb/server
+```
+- Avviare la prima volta il container Mariadb:
+```shell
+docker run --name mariadbtest -e MYSQL_ROOT_PASSWORD=mypass -d mariadb/server
+```
+- Per Avviare, fermare o riavviare il container Mariadb:
+```shell
+docker start mariadbtest
+```
+```shell
+docker stop mariadbtest
+```
+```shell
+docker restart mariadbtest
+```
+- Il container Mariadbtest non si avvia automaticamente all'avvio del sistema operativo. Per fare ciò usiamo crontab:
+```shell
+crontab -e
+```
+- selezioniamo l'editor preferito e aggiungiamo la seguente riga al file di testo:
+```text
+@reboot docker start mariadbtest
+```
+
+## Risorse utilizzate:
+
+- Freecad 0.19: https://github.com/FreeCAD/FreeCAD/releases
+- Docker: https://www.docker.com/
+- Mariadb per docker: https://mariadb.com/kb/en/installing-and-using-mariadb-via-docker/ https://hub.docker.com/_/mariadb
+- GUI per Docker: https://github.com/docker/kitematic/releases 
+- Esempi di codice Python per Mysql: https://www.w3schools.com/python/python_mysql_select.asp
 
 ## TODO list:
 

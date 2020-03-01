@@ -55,6 +55,8 @@ def SalvaDati():
     sheet = crea_spreadsheet()
     popola_spreadsheet(sheet)
 
+    
+
     qm = QtWidgets.QMessageBox
     question = qm.question(None, "Esportazione in FCStd", "Si desidera esportare il disegno in formato FCStd?", qm.Yes | qm.No)
     if (question == qm.No):
@@ -101,8 +103,9 @@ def SalvaDati():
                                 int(ui.lineEdit_Quantita.text()),
                                 ui.comboBox_MisuraMax.currentData(),
                                 float(ui.lineEdit_Massa.text()),
-                                str(cwd + "/resources/" + ui.comboBox_Cliente.currentText() + "/" + ui.lineEdit_Riferimento.text() + ".csv"))
+                                nomeFile)
                                 )
+        database.disconnetti()
 
     ChiudiApplicazione()
 
@@ -145,11 +148,6 @@ def popola_spreadsheet(sheet):
 
     sheet.set("A8", "Codice:")
     sheet.set("B8", ui.lineEdit_Codice.text())
-
-    sheet.set("A9", "Cliente:")
-    sheet.set("B9", ui.comboBox_Cliente.currentText())
-
-    sheet.set("A10", "Q.tà per Disegno:")
     sheet.set("B10", ui.lineEdit_Quantita.text())
 
     sheet.set("A11", "Misura di massima:")

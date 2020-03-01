@@ -42,9 +42,14 @@ def inserisci_riga(dati):
   mariadb_connection.commit()
 
 def verifica_tabella_database():
-  tabella = cursor.execute("SHOW TABLES LIKE 'tubi';")
+  cursor.execute("SHOW TABLES LIKE 'tubi';")
   tabella = cursor.fetchone()
   if not tabella:
     Crea_tabella()
 
-    
+def interroga_database():
+  cursor.execute("SELECT * FROM tubi;")
+  risultati = cursor.fetchall()
+  for x in risultati:
+    print(x)
+    print(x[13])
