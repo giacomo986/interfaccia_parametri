@@ -50,22 +50,35 @@ def verifica_tabella_database():
   if not tabella:
     Crea_tabella()
 
-def interroga_database():
-  cursor.execute("SELECT "
-                #"task_id, "
-                "riferimento, "
-                "codice_padre, "
-                "macchina, "
-                "materiale, "
-                "denominazione_profilo, "
-                "data_creazione, "
-                "nome, "
-                "codice, "
-                "cliente, "
-                "quantità_per_disegno, "
-                "misura_di_massima, "
-                "massa, "
-                "percorso "
-                " FROM tubi;")
+def interroga_database(condizioni):
+  query = ("SELECT "
+          "riferimento, "
+          "codice_padre, "
+          "macchina, "
+          "materiale, "
+          "denominazione_profilo, "
+          "data_creazione, "
+          "nome, "
+          "codice, "
+          "cliente, "
+          "quantità_per_disegno, "
+          "misura_di_massima, "
+          "massa, "
+          "percorso "
+          "FROM tubi ")
+
+  if condizioni:
+    query = query + "WHERE "
+    for elemento in condizioni:
+      if condizioni[elemento]:
+        query = query + "%s = '%s' " % (elemento, condizioni[elemento])
+
+  query = query + ";"
+  print(query)
+  cursor.execute(query)
   tabella = cursor.fetchall()
   return tabella
+
+"SELECT article, dealer, price"
+"FROM   shop"
+"WHERE  price=(SELECT MAX(price) FROM shop);"

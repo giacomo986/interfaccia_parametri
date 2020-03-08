@@ -18,7 +18,8 @@ class Ui_Form(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
 
         self.tableView = QtWidgets.QTableView(Form)
-        #self.tableview.setSortingEnabled(True)
+        self.tableView.setSortingEnabled(True)
+        self.tableView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
 
         self.verticalLayout.addWidget(self.tableView)
         self.gridLayout = QtWidgets.QGridLayout()

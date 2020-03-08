@@ -55,59 +55,51 @@ def SalvaDati():
     sheet = crea_spreadsheet()
     popola_spreadsheet(sheet)
 
-    qm = QtWidgets.QMessageBox
-    question = qm.question(None, "Esportazione in FCStd", "Si desidera esportare il disegno in formato FCStd?", qm.Yes | qm.No)
-    if (question == qm.No):
-        qm.information(None, "Informazione", "Nessuna esportazione")
-    else:
-        filePath = Percorso_disegni + ui.comboBox_Cliente.currentText() + "/"
+    filePath = Percorso_disegni + ui.comboBox_Cliente.currentText() + "/"
 
-        if not(ui.lineEdit_CodicePadre.text() == ""):
-            filePath = filePath + ui.lineEdit_CodicePadre.text() + "/"
+    if not(ui.lineEdit_CodicePadre.text() == ""):
+        filePath = filePath + ui.lineEdit_CodicePadre.text() + "/"
 
-        os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
+    os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
 
-        nomeFile = str(filePath + ui.lineEdit_Riferimento.text() + ".FCStd") # imposta il nome del file da salvare
+    nomeFile = str(filePath + ui.lineEdit_Riferimento.text() + ".FCStd") # imposta il nome del file da salvare
 
-        if not os.path.exists(nomeFile):
-            open(nomeFile, "w")
+    if os.path.exists(nomeFile):
+        qm = QtWidgets.QMessageBox
+        question = qm.question(None, "File già esistente", "File già esistente. Vuoi sovrascrivere il file?", qm.Yes | qm.No)
+        if (question == qm.No):
+            qm.information(None, "Informazione", "Nessuna modifica")
         else:
+            Documento.saveAs(nomeFile)
             qm = QtWidgets.QMessageBox
-            question = qm.question(None, "File già esistente", "File già esistente. Vuoi sovrascrivere il file?", qm.Yes | qm.No)
-            if (question == qm.No):
-                qm.information(None, "Informazione", "Nessuna modifica")
-
+            qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
+    else:
         Documento.saveAs(nomeFile)
-
         qm = QtWidgets.QMessageBox
         qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
 
-    qm = QtWidgets.QMessageBox
-    question = qm.question(None, "Salvataggio su database", "Si desidera salvare i dati su database?", qm.Yes | qm.No)
-    if (question == qm.No):
-        qm.information(None, "Informazione", "Nessuna aggiunta al database")
+    connesso = database.connetti(cwd)
+    if connesso:
+
+        database.inserisci_riga((ui.lineEdit_Riferimento.text(),
+                                ui.lineEdit_CodicePadre.text(),
+                                ui.lineEdit_Macchina.text(),
+                                str(ui.comboBox_Materiale.currentData()),
+                                ui.comboBox_Denominazione.currentText(),
+                                ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
+                                ui.lineEdit_Nome.text(),
+                                ui.lineEdit_Codice.text(),
+                                ui.comboBox_Cliente.currentText(),
+                                int(ui.lineEdit_Quantita.text()),
+                                ui.comboBox_MisuraMax.currentData(),
+                                float(ui.lineEdit_Massa.text()),
+                                nomeFile)
+                                )
+        database.disconnetti()
     else:
-        connesso = database.connetti(cwd)
-        if connesso:
-            database.inserisci_riga((ui.lineEdit_Riferimento.text(),
-                                    ui.lineEdit_CodicePadre.text(),
-                                    u~~i.lineEdit_Macchina.text(),
-                                    str(ui.comboBox_Materiale.currentData()),
-                                    ui.comboBox_Denominazione.currentText(),
-                                    ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
-                                    ui.lineEdit_Nome.text(),
-                                    ui.lineEdit_Codice.text(),
-                                    ui.comboBox_Cliente.currentText(),
-                                    int(ui.lineEdit_Quantita.text()),
-                                    ui.comboBox_MisuraMax.currentData(),
-                                    float(ui.lineEdit_Massa.text()),
-                                    nomeFile)
-                                    )
-            database.disconnetti()
-        else:
-            qm = QtWidgets.QMessageBox
-            question = qm.information(None, "Database non raggiungibile", "Il database non è raggiungibile, assicurarsi che i dati di accesso siano corretti e che il database sia avviato.")
-            return
+        qm = QtWidgets.QMessageBox
+        question = qm.information(None, "Database non raggiungibile", "Il database non è raggiungibile, assicurarsi che i dati di accesso siano corretti e che il database sia avviato.")
+        return
     ChiudiApplicazione()
 
 def leggiCSV(PercorsoFile):
@@ -117,7 +109,6 @@ def leggiCSV(PercorsoFile):
         next(reader)
         for row in reader:
             lista.append(row)
-
     return lista
 
 def crea_spreadsheet():

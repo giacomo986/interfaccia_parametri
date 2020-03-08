@@ -100,7 +100,7 @@ https://hub.docker.com/_/mariadb
     - file linkato nel database non esistente
     - lista clienti vuota
     - lista materiali vuota
-    - file di configurazione mancante o vuoto e illegibile
+    - ~~file di configurazione mancante o vuoto e illegibile~~
     - percorso di salvataggio disegni non raggiungibile
     - permessi insufficienti percorso di salvataggio
-    - permessi insufficienti database (non necessario)
+    - ~~permessi insufficienti database~~ (non necessario)
