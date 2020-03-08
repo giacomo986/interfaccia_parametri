@@ -3,15 +3,24 @@ import csv
 
 
 class CsvTableModel(QtCore.QAbstractTableModel):
-    """The model for a CSV table."""
 
-    def __init__(self, csv_file):
+    def __init__(self, tabella):
         super().__init__()
-        self.filename = csv_file
-        with open(self.filename) as fh:
-            csvreader = csv.reader(fh)
-            self._headers = next(csvreader)
-            self._data = list(csvreader)
+        #self.filename = csv_file
+        self._headers = ["Riferimento",
+                        "Codice padre",
+                        "Macchina",
+                        "Materiale",
+                        "Denominazione profilo",
+                        "Data di creazione",
+                        "Nome",
+                        "Codice",
+                        "Cliente",
+                        "Q.tà per Disegno",
+                        "Misura di massima",
+                        "Massa",
+                        "Percorso"]
+        self._data = tabella
 
     # Minimum necessary methods:
     def rowCount(self, parent):
@@ -41,7 +50,7 @@ class CsvTableModel(QtCore.QAbstractTableModel):
 
     def headerData(self, section, orientation, role):
 
-        if orientation == QtCore.Qt.Horizontal and role == PyQt5.QtCore.Qt.DisplayRole:
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
             return self._headers[section]
         else:
             return super().headerData(section, orientation, role)
@@ -65,34 +74,3 @@ class CsvTableModel(QtCore.QAbstractTableModel):
             return True
         else:
             return False
-
-    # Methods for inserting or deleting
-
-    def insertRows(self, position, rows, parent):
-        self.beginInsertRows(
-            parent or QtCore.QModelIndex(),
-            position,
-            position + rows - 1
-        )
-
-        for i in range(rows):
-            default_row = [''] * len(self._headers)
-            self._data.insert(position, default_row)
-        self.endInsertRows()
-
-    def removeRows(self, position, rows, parent):
-        self.beginRemoveRows(
-            parent or QtCore.QModelIndex(),
-            position,
-            position + rows - 1
-        )
-        for i in range(rows):
-            del(self._data[position])
-        self.endRemoveRows()
-
-    # method for saving
-    def save_on_file(self):
-        with open(self.filename, 'w', encoding='utf-8') as fh:
-            writer = csv.writer(fh)
-            writer.writerow(self._headers)
-            writer.writerows(self._data)

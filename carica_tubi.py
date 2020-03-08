@@ -15,11 +15,16 @@ def ChiudiApplicazione():
 
 def recupera_dati():
     global tabella
-    database.connetti(cwd)
-    tabella = database.interroga_database()
-    database.disconnetti()
-    model = CsvTableModel(filename)
-    self.tableview.setModel(self.model)
+    connesso = database.connetti(cwd)
+    if connesso:
+        tabella = database.interroga_database()
+        database.disconnetti()
+        model = CsvTableModel(tabella)
+        ui.tableView.setModel(model)
+    else:
+        qm = QtWidgets.QMessageBox
+        question = qm.information(None, "Database non raggiungibile", "Il database non è raggiungibile, assicurarsi che i dati di accesso siano corretti e che il database sia avviato.")
+        return
 
 def carica_documento():
     global tabella

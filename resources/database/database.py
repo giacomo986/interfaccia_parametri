@@ -6,10 +6,13 @@ def connetti(cwd):
 
   with open(cwd + "/resources/database/db_config.json", "r") as read_file:
     config = json.load(read_file)
-
-  mariadb_connection = mariadb.connect(**config)
-  cursor = mariadb_connection.cursor(buffered=True)
-  verifica_tabella_database()
+  try:
+    mariadb_connection = mariadb.connect(**config)
+    cursor = mariadb_connection.cursor(buffered=True)
+    verifica_tabella_database()
+    return True
+  except:
+    return False
 
 def disconnetti():
   cursor.close()
@@ -48,9 +51,21 @@ def verifica_tabella_database():
     Crea_tabella()
 
 def interroga_database():
-  cursor.execute("SELECT * FROM tubi;")
-  risultati = cursor.fetchall()
-  for x in risultati:
-    print(x)
-    print(x[13])
-  return risultati
+  cursor.execute("SELECT "
+                #"task_id, "
+                "riferimento, "
+                "codice_padre, "
+                "macchina, "
+                "materiale, "
+                "denominazione_profilo, "
+                "data_creazione, "
+                "nome, "
+                "codice, "
+                "cliente, "
+                "quantità_per_disegno, "
+                "misura_di_massima, "
+                "massa, "
+                "percorso "
+                " FROM tubi;")
+  tabella = cursor.fetchall()
+  return tabella
