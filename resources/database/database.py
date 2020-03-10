@@ -65,20 +65,22 @@ def interroga_database(condizioni):
           "misura_di_massima, "
           "massa, "
           "percorso "
-          "FROM tubi ")
+          "FROM tubi")
 
   if condizioni:
-    query = query + "WHERE "
+    contatore = 0
+    cond = ""
     for elemento in condizioni:
       if condizioni[elemento]:
-        query = query + "%s = '%s' " % (elemento, condizioni[elemento])
+        if contatore > 0:
+          cond = cond + "AND "
+        cond = cond + "%s = '%s' " % (elemento, condizioni[elemento])
+        contatore += 1
+    if contatore > 0:
+      query = query + " WHERE " + cond
 
   query = query + ";"
-  print(query)
+  #print(query)
   cursor.execute(query)
   tabella = cursor.fetchall()
   return tabella
-
-"SELECT article, dealer, price"
-"FROM   shop"
-"WHERE  price=(SELECT MAX(price) FROM shop);"

@@ -56,7 +56,7 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.lineEdit_Massa, 11, 6, 1, 1)
         
         self.lineEdit_Quantita = QtWidgets.QLineEdit(Form)
-        Quantita_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Massa)
+        Quantita_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Quantita)
         self.lineEdit_Quantita.setValidator(Quantita_input_validator)
         self.gridLayout.addWidget(self.lineEdit_Quantita, 9, 6, 1, 1)
 

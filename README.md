@@ -97,7 +97,7 @@ https://hub.docker.com/_/mariadb
 - il nome del file originale del cliente diventa il codice padre (assieme)
 - Gestione delle eccezioni:
     - ~~mancata connessione al database e/o credenziali sbagliate~~
-    - file linkato nel database non esistente
+    - ~~file linkato nel database non esistente~~
     - lista clienti vuota
     - lista materiali vuota
     - ~~file di configurazione mancante o vuoto e illegibile~~

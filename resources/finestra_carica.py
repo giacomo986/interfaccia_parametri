@@ -63,15 +63,15 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.lineEdit_Massa, 11, 6, 1, 1)
         
         self.lineEdit_Quantita = QtWidgets.QLineEdit(Form)
-        Quantita_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Massa)
+        Quantita_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Quantita)
         self.lineEdit_Quantita.setValidator(Quantita_input_validator)
         self.gridLayout.addWidget(self.lineEdit_Quantita, 9, 6, 1, 1)
 
         self.lineEdit_Codice = QtWidgets.QLineEdit(Form)
         self.gridLayout.addWidget(self.lineEdit_Codice, 7, 6, 1, 1)
 
-        self.comboBox_MisuraMax = QtWidgets.QComboBox(Form)
-        self.gridLayout.addWidget(self.comboBox_MisuraMax, 10, 6, 1, 1)
+        self.lineEdit_MisuraMax = QtWidgets.QLineEdit(Form)
+        self.gridLayout.addWidget(self.lineEdit_MisuraMax, 10, 6, 1, 1)
 
         self.comboBox_Cliente = QtWidgets.QComboBox(Form)
         self.gridLayout.addWidget(self.comboBox_Cliente, 8, 6, 1, 1)
@@ -100,7 +100,6 @@ class Ui_Form(object):
         self.DateTimeEdit_Data = QtWidgets.QDateTimeEdit(Form)
         self.gridLayout.addWidget(self.DateTimeEdit_Data, 5, 6, 1, 1)
     
-
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(6)
 
@@ -134,9 +133,8 @@ class Ui_Form(object):
         self.comboBox_Denominazione.setToolTip(_translate("Form", "menu a tendina con nomi standard"))
         self.lineEdit_Massa.setToolTip(_translate("Form", "automatica, volume per densità (collegata a materiale)"))
         self.lineEdit_Quantita.setToolTip(_translate("Form", "valore numerico, default 1, editabile"))
-        self.lineEdit_Quantita.setText(_translate("Form", "1"))
         self.lineEdit_Codice.setToolTip(_translate("Form", "ridondante (facoltativo)"))
-        self.comboBox_MisuraMax.setToolTip(_translate("Form", "automatiche, vedi box ingombro (orientamento sempre uguale)"))
+        self.lineEdit_MisuraMax.setToolTip(_translate("Form", "automatiche, vedi box ingombro (orientamento sempre uguale)"))
         self.comboBox_Cliente.setToolTip(_translate("Form", "associare a tabella esterna editabile"))
         self.comboBox_Materiale.setToolTip(_translate("Form", "FERRO, INOX (legato a densità) associare a tabella esterna editabile"))
         self.label_8.setText(_translate("Form", "Codice:"))

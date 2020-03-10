@@ -39,7 +39,7 @@ def recupera_dati():
     global tabella
     connesso = database.connetti(cwd)
     if connesso:
-        condizioni = leggi_campi(){ "riferimento" : "aaaa", "codice_padre" : "" }
+        condizioni = leggi_campi()
         tabella = database.interroga_database(condizioni)
         database.disconnetti()
         model = CsvTableModel(tabella)
@@ -53,15 +53,15 @@ def leggi_campi():
     dizionario = {"riferimento" : ui.lineEdit_Riferimento.text(),
                     "codice_padre" : ui.lineEdit_CodicePadre.text(),
                     "macchina" : ui.lineEdit_Macchina.text(),
-                    "materiale" :
-                    "denominazione_profilo" :
-                    "data_creazione" :
-                    "nome" :
-                    "codice" :
-                    "cliente" : 
-                    "quantità_per_disegno" :
-                    "misura_di_massima" :
-                    "massa" :
+                    "materiale" : str(ui.comboBox_Materiale.currentData()) if not ui.comboBox_Materiale.currentText() == "<Qualsiasi materiale>" else "",
+                    "denominazione_profilo" : ui.comboBox_Denominazione.currentText(),
+                    "data_creazione" : "",
+                    "nome" : ui.lineEdit_Nome.text(),
+                    "codice" : ui.lineEdit_Codice.text(),
+                    "cliente" : ui.comboBox_Cliente.currentText() if not ui.comboBox_Cliente.currentText() == "<Qualsiasi cliente>" else "",
+                    "quantità_per_disegno" : ui.lineEdit_Quantita.text(),
+                    "misura_di_massima" : ui.lineEdit_MisuraMax.text(),
+                    "massa" : ui.lineEdit_Massa.text()}
     return dizionario
 
 def carica_documento():
