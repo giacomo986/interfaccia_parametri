@@ -19,6 +19,8 @@ def InizializzaDati():
         peso_specifico = element[1]
         ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", peso_specifico)
 
+    ui.DateTimeEdit_Data2.setDateTime(datetime.datetime.now())
+
     ui.CancelButton.clicked.connect(ChiudiApplicazione)
     ui.SearchButton.clicked.connect(recupera_dati)
     ui.AcceptButton.clicked.connect(carica_documento)
@@ -50,18 +52,20 @@ def recupera_dati():
         return
 
 def leggi_campi():
-    dizionario = {"riferimento" : ui.lineEdit_Riferimento.text(),
-                    "codice_padre" : ui.lineEdit_CodicePadre.text(),
-                    "macchina" : ui.lineEdit_Macchina.text(),
-                    "materiale" : str(ui.comboBox_Materiale.currentData()) if not ui.comboBox_Materiale.currentText() == "<Qualsiasi materiale>" else "",
-                    "denominazione_profilo" : ui.comboBox_Denominazione.currentText(),
-                    "data_creazione" : "",
-                    "nome" : ui.lineEdit_Nome.text(),
-                    "codice" : ui.lineEdit_Codice.text(),
-                    "cliente" : ui.comboBox_Cliente.currentText() if not ui.comboBox_Cliente.currentText() == "<Qualsiasi cliente>" else "",
-                    "quantità_per_disegno" : ui.lineEdit_Quantita.text(),
-                    "misura_di_massima" : ui.lineEdit_MisuraMax.text(),
-                    "massa" : ui.lineEdit_Massa.text()}
+    # viene creato un dizionario per i filtri per la query del database
+    dizionario = {"riferimento" : [[ui.lineEdit_Riferimento.text(), "="]],
+                    "codice_padre" : [[ui.lineEdit_CodicePadre.text(), "="]],
+                    "macchina" : [[ui.lineEdit_Macchina.text(), "="]],
+                    "materiale" : [[str(ui.comboBox_Materiale.currentData()), "="]] if not ui.comboBox_Materiale.currentText() == "<Qualsiasi materiale>" else [["", "="]],
+                    "denominazione_profilo" : [[ui.comboBox_Denominazione.currentText(), "="]],
+                    "data_creazione" : [[ui.DateTimeEdit_Data.setDateTime(datetime.datetime.now()), ">="], [ui.DateTimeEdit_Data2.setDateTime(datetime.datetime.now()), "="]],
+                    "nome" : [[ui.lineEdit_Nome.text(), "="]],
+                    "codice" : [[ui.lineEdit_Codice.text(), "="]],
+                    "cliente" : [[ui.comboBox_Cliente.currentText(), "="]] if not ui.comboBox_Cliente.currentText() == "<Qualsiasi cliente>" else [["", "="]],
+                    "quantità_per_disegno" : [[ui.lineEdit_Quantita.text(), "="]],
+                    "misura_di_massima" : [[ui.lineEdit_MisuraMax.text(), ">="], [ui.lineEdit_MisuraMax2.text(), "<="]],
+                    "massa" : [[ui.lineEdit_Massa.text(), ">="], [ui.lineEdit_Massa2.text(), "<="]]
+                    }
     return dizionario
 
 def carica_documento():

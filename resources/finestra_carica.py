@@ -61,6 +61,11 @@ class Ui_Form(object):
         Massa_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Massa)
         self.lineEdit_Massa.setValidator(Massa_input_validator)
         self.gridLayout.addWidget(self.lineEdit_Massa, 11, 6, 1, 1)
+
+        self.lineEdit_Massa2 = QtWidgets.QLineEdit(Form)
+        Massa2_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Massa2)
+        self.lineEdit_Massa2.setValidator(Massa2_input_validator)
+        self.gridLayout.addWidget(self.lineEdit_Massa2, 11, 7, 1, 1)
         
         self.lineEdit_Quantita = QtWidgets.QLineEdit(Form)
         Quantita_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Quantita)
@@ -72,6 +77,9 @@ class Ui_Form(object):
 
         self.lineEdit_MisuraMax = QtWidgets.QLineEdit(Form)
         self.gridLayout.addWidget(self.lineEdit_MisuraMax, 10, 6, 1, 1)
+
+        self.lineEdit_MisuraMax2 = QtWidgets.QLineEdit(Form)
+        self.gridLayout.addWidget(self.lineEdit_MisuraMax2, 10, 7, 1, 1)
 
         self.comboBox_Cliente = QtWidgets.QComboBox(Form)
         self.gridLayout.addWidget(self.comboBox_Cliente, 8, 6, 1, 1)
@@ -99,6 +107,9 @@ class Ui_Form(object):
 
         self.DateTimeEdit_Data = QtWidgets.QDateTimeEdit(Form)
         self.gridLayout.addWidget(self.DateTimeEdit_Data, 5, 6, 1, 1)
+
+        self.DateTimeEdit_Data2 = QtWidgets.QDateTimeEdit(Form)
+        self.gridLayout.addWidget(self.DateTimeEdit_Data2, 5, 7, 1, 1)
     
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(6)
@@ -119,9 +130,9 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Salva Informazioni"))
+        Form.setWindowTitle(_translate("Form", "Carica disegno"))
         self.label_4.setText(_translate("Form", "Materiale:"))
-        self.label_12.setText(_translate("Form", "Massa (grammi):"))
+        self.label_12.setText(_translate("Form", "Massa (grammi) (da ... a ...):"))
         self.label_7.setText(_translate("Form", "Nome:"))
         self.label.setText(_translate("Form", "Riferimento:"))
         self.lineEdit_Riferimento.setToolTip(_translate("Form", "Codice disegno (testo libero)"))
@@ -140,9 +151,9 @@ class Ui_Form(object):
         self.label_8.setText(_translate("Form", "Codice:"))
         self.label_9.setText(_translate("Form", "Cliente:"))
         self.lineEdit_Nome.setToolTip(_translate("Form", "ridondante, nome del cliente (facoltativo)"))
-        self.label_6.setText(_translate("Form", "Data di creazione:"))
+        self.label_6.setText(_translate("Form", "Data di creazione (da ... a ...):"))
         self.label_10.setText(_translate("Form", "Q.tà per Disegno:"))
-        self.label_11.setText(_translate("Form", "Misura di massima:"))
+        self.label_11.setText(_translate("Form", "Misura di massima (da ... a ...):"))
         self.CancelButton.setText(_translate("Form", "Chiudi"))
         self.SearchButton.setText(_translate("Form", "Cerca"))
         self.AcceptButton.setText(_translate("Form", "Carica"))

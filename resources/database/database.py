@@ -67,20 +67,38 @@ def interroga_database(condizioni):
           "percorso "
           "FROM tubi")
 
+  # controlla se il dizionario contiene dati per filtrare la query
   if condizioni:
+    # inizializzazione variabili
     contatore = 0
-    cond = ""
-    for elemento in condizioni:
-      if condizioni[elemento]:
-        if contatore > 0:
-          cond = cond + "AND "
-        cond = cond + "%s = '%s' " % (elemento, condizioni[elemento])
-        contatore += 1
+    stringa = ""
+
+    for i in condizioni: # Per ogni campo (colonna del db) del dizionario
+      for j in condizioni[i]: # Per ogni condizione all'interno del campo (Per es: nome uguale a "xxx", massa minore di "yyy")
+        if j[0]: # se esiste un valore di confronto diverso da ""
+          if contatore > 0:
+            stringa = stringa + "AND "
+          stringa = stringa + "%s %s '%s' " % (i, j[1], j[0]) # aggiunge la condizione con i = nome della colonna, j[1] = operazione da copiere (es: "<="), j[0] = valore di confronto
     if contatore > 0:
-      query = query + " WHERE " + cond
+      query = query + " WHERE " + stringa
 
   query = query + ";"
   #print(query)
   cursor.execute(query)
   tabella = cursor.fetchall()
   return tabella
+
+
+
+'''
+  if condizioni:
+    contatore = 0
+    cond = ""
+    for elemento in condizioni:
+      if condizioni[elemento]:
+        if contatore > 0:
+          stringa = stringa + "AND "
+        stringa = stringa + "%s = '%s' " % (elemento, condizioni[elemento])
+        contatore += 1
+    if contatore > 0:
+      query = query + " WHERE " + stringa'''
