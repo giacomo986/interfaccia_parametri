@@ -11,7 +11,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         
-        Form.resize(600, 500)
+        Form.resize(800, 600)
 
         reg_ex = QtCore.QRegExp(r"[-+]?[0-9]*\.?[0-9]+") # Regular Expression per filtrare solo valori numerici dove necessario
 

@@ -39,3 +39,34 @@ def scriviCSV(PercorsoFile):
                         [ui.lineEdit_Quantita.text()] +
                         [ui.comboBox_MisuraMax.currentData()] +
                         [ui.lineEdit_Massa.text()])'''
+
+App.getDocument('Senza_nome').copyObject(App.getDocument('Tronco_di_cono').getObject('Cone'), True)
+
+
+
+
+$ docker exec some-mysql sh -c 'exec mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD"' > /home/giacomo/all-databases.sql
+docker exec mariadbtest sh -c 'exec mysqldump -p DBTubi -uroot -p"$MYSQL_ROOT_PASSWORD"' > /home/giacomo/DBtubi.sql
+
+
+$ docker exec -i some-mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD"' < /home/giacomo/all-databases.sql
+
+
+App.activeDocument().addObject('TechDraw::DrawPage','Page')
+App.activeDocument().addObject('TechDraw::DrawSVGTemplate','Template')
+App.activeDocument().Template.Template = '/usr/share/freecad-daily/Mod/TechDraw/Templates/A4_LandscapeTD.svg'
+App.activeDocument().Page.Template = App.activeDocument().Template
+
+App.activeDocument().addObject('TechDraw::DrawProjGroup','ProjGroup')
+App.activeDocument().Page.addView(App.activeDocument().ProjGroup)
+App.activeDocument().ProjGroup.addProjection('Front')
+App.activeDocument().ProjGroup.Anchor.Direction = FreeCAD.Vector(0.000,0.000,1.000)
+App.activeDocument().ProjGroup.Anchor.RotationVector = FreeCAD.Vector(1.000,0.000,0.000)
+App.activeDocument().ProjGroup.Anchor.XDirection = FreeCAD.Vector(1.000,0.000,0.000)
+App.activeDocument().ProjGroup.Anchor.recompute()
+App.ActiveDocument.recompute()
+### End command TechDraw_ProjectionGroup
+
+App.activeDocument().ProjGroup.addProjection('Left')
+App.activeDocument().ProjGroup.addProjection('Top')
+App.activeDocument().ProjGroup.addProjection('Left')

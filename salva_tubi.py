@@ -52,6 +52,15 @@ def SalvaDati():
         question = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
         return
 
+    Documento_nuovo = App.newDocument(ui.lineEdit_Riferimento.text())
+    corpo = Documento_nuovo.copyObject(objs[0], True)
+    corpo.Label = ui.lineEdit_Riferimento.text()
+    if ui.lineEdit_CodicePadre.text():
+        Parte = Documento_nuovo.addObject('App::Part', ui.lineEdit_CodicePadre.text())
+        Parte.addObject(corpo)
+    
+    App.setActiveDocument(ui.lineEdit_Riferimento.text())
+
     sheet = crea_spreadsheet()
     popola_spreadsheet(sheet)
 
@@ -70,11 +79,11 @@ def SalvaDati():
         if (question == qm.No):
             qm.information(None, "Informazione", "Nessuna modifica")
         else:
-            Documento.saveAs(nomeFile)
+            Documento_nuovo.saveAs(nomeFile)
             qm = QtWidgets.QMessageBox
             qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
     else:
-        Documento.saveAs(nomeFile)
+        Documento_nuovo.saveAs(nomeFile)
         qm = QtWidgets.QMessageBox
         qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
 
@@ -100,6 +109,8 @@ def SalvaDati():
         qm = QtWidgets.QMessageBox
         question = qm.information(None, "Database non raggiungibile", "Il database non è raggiungibile, assicurarsi che i dati di accesso siano corretti e che il database sia avviato.")
         return
+    App.closeDocument(ui.lineEdit_Riferimento.text())
+
     ChiudiApplicazione()
 
 def leggiCSV(PercorsoFile):
@@ -113,7 +124,7 @@ def leggiCSV(PercorsoFile):
 
 def crea_spreadsheet():
     sheet = App.ActiveDocument.addObject("Spreadsheet::Sheet")
-    sheet.Label = ui.lineEdit_Riferimento.text()
+    sheet.Label = "SS_%s" % ui.lineEdit_Riferimento.text()
     return sheet
 
 def popola_spreadsheet(sheet):
@@ -174,19 +185,19 @@ if len(objs) >= 1:
             with open(cwd + "/resources/macro_config.json", "r") as read_file:
                 config = json.load(read_file)
             Percorso_disegni = config["Percorso_disegni"]
+
+            Documento_originale = App.ActiveDocument # Salva un riferimento del documento originale aperto per comodità
+        
+            # Crea la finestra
+            Form = QtWidgets.QWidget()
+            ui = interfaccia.Ui_Form()
+            ui.setupUi(Form)
+            InizializzaDati()
+            Form.show()
         except:
             qm = QtWidgets.QMessageBox
             question = qm.information(None, "Errore file di configurazione", "File di configurazione non esistente o non leggibile.")
-            return
 
-        Documento =  App.ActiveDocument # Salva un riferimento del documento aperto per comodità
-
-        # Crea la finestra
-        Form = QtWidgets.QWidget()
-        ui = interfaccia.Ui_Form()
-        ui.setupUi(Form)
-        InizializzaDati()
-        Form.show()
     else:
         qm = QtWidgets.QMessageBox
         qm.information(None, "Nessun solido selezionato", "Per avviare la macro è necessario selezionare un solido")

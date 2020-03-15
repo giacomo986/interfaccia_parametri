@@ -53,14 +53,14 @@ def recupera_dati():
 
 def leggi_campi():
     # viene creato un dizionario per i filtri per la query del database
-    dizionario = {"riferimento" : [[ui.lineEdit_Riferimento.text(), "="]],
-                    "codice_padre" : [[ui.lineEdit_CodicePadre.text(), "="]],
-                    "macchina" : [[ui.lineEdit_Macchina.text(), "="]],
+    dizionario = {"riferimento" : [["%%%s%%" % ui.lineEdit_Riferimento.text(), "LIKE"]],
+                    "codice_padre" : ["%%%s%%" % [ui.lineEdit_CodicePadre.text(), "LIKE"]],
+                    "macchina" : [["%%%s%%" % ui.lineEdit_Macchina.text(), "LIKE"]],
                     "materiale" : [[str(ui.comboBox_Materiale.currentData()), "="]] if not ui.comboBox_Materiale.currentText() == "<Qualsiasi materiale>" else [["", "="]],
                     "denominazione_profilo" : [[ui.comboBox_Denominazione.currentText(), "="]],
-                    "data_creazione" : [[ui.DateTimeEdit_Data.setDateTime(datetime.datetime.now()), ">="], [ui.DateTimeEdit_Data2.setDateTime(datetime.datetime.now()), "="]],
-                    "nome" : [[ui.lineEdit_Nome.text(), "="]],
-                    "codice" : [[ui.lineEdit_Codice.text(), "="]],
+                    "data_creazione" : [[ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"), ">="], [ui.DateTimeEdit_Data2.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"), "<="]],
+                    "nome" : [["%%%s%%" % ui.lineEdit_Nome.text(), "LIKE"]],
+                    "codice" : [["%%%s%%" % ui.lineEdit_Codice.text(), "LIKE"]],
                     "cliente" : [[ui.comboBox_Cliente.currentText(), "="]] if not ui.comboBox_Cliente.currentText() == "<Qualsiasi cliente>" else [["", "="]],
                     "quantità_per_disegno" : [[ui.lineEdit_Quantita.text(), "="]],
                     "misura_di_massima" : [[ui.lineEdit_MisuraMax.text(), ">="], [ui.lineEdit_MisuraMax2.text(), "<="]],
