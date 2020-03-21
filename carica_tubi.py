@@ -5,7 +5,7 @@ import csv, datetime, Spreadsheet, json
 from resources.CsvTableModelClass import CsvTableModel
 import resources.database.database as database
 
-def InizializzaDati():
+def InizializzaIterfaccia():
 
     ui.comboBox_Cliente.addItem("<Qualsiasi cliente>", False)
     clienti = leggiCSV(cwd + "/resources/clienti.csv")
@@ -18,6 +18,11 @@ def InizializzaDati():
         nome_materiale = element[0]
         peso_specifico = element[1]
         ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", peso_specifico)
+
+    ui.comboBox_Denominazione.addItem("<Qualsiasi denominazione>", False)
+    denominazioni = leggiCSV(cwd + "/resources/denominazioni_profilo.csv")
+    for element in denominazioni:
+        ui.comboBox_Denominazione.addItem(element[0], element[1])
 
     ui.DateTimeEdit_Data2.setDateTime(datetime.datetime.now())
 
@@ -53,14 +58,14 @@ def recupera_dati():
 
 def leggi_campi():
     # viene creato un dizionario per i filtri per la query del database
-    dizionario = {"riferimento" : [["%%%s%%" % ui.lineEdit_Riferimento.text(), "LIKE"]],
-                    "codice_padre" : ["%%%s%%" % [ui.lineEdit_CodicePadre.text(), "LIKE"]],
-                    "macchina" : [["%%%s%%" % ui.lineEdit_Macchina.text(), "LIKE"]],
+    dizionario = {"riferimento" : [["" if not ui.lineEdit_Riferimento.text() else "%%%s%%" % ui.lineEdit_Riferimento.text(), "LIKE"]],
+                    "codice_padre" : [["" if not ui.lineEdit_CodicePadre.text() else "%%%s%%" % ui.lineEdit_CodicePadre.text(), "LIKE"]],
+                    "macchina" : [["" if not ui.lineEdit_Macchina.text() else "%%%s%%" % ui.lineEdit_Macchina.text(), "LIKE"]],
                     "materiale" : [[str(ui.comboBox_Materiale.currentData()), "="]] if not ui.comboBox_Materiale.currentText() == "<Qualsiasi materiale>" else [["", "="]],
-                    "denominazione_profilo" : [[ui.comboBox_Denominazione.currentText(), "="]],
+                    "denominazione_profilo" : [[ui.comboBox_Denominazione.currentText(), "="]] if not ui.comboBox_Denominazione.currentText() == "<Qualsiasi denominazione>" else [["", "="]],
                     "data_creazione" : [[ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"), ">="], [ui.DateTimeEdit_Data2.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"), "<="]],
-                    "nome" : [["%%%s%%" % ui.lineEdit_Nome.text(), "LIKE"]],
-                    "codice" : [["%%%s%%" % ui.lineEdit_Codice.text(), "LIKE"]],
+                    "nome" : [["" if not ui.lineEdit_Nome.text() else "%%%s%%" % ui.lineEdit_Nome.text(), "LIKE"]],
+                    "codice" : [["" if not ui.lineEdit_Codice.text() else "%%%s%%" % ui.lineEdit_Codice.text(), "LIKE"]],
                     "cliente" : [[ui.comboBox_Cliente.currentText(), "="]] if not ui.comboBox_Cliente.currentText() == "<Qualsiasi cliente>" else [["", "="]],
                     "quantità_per_disegno" : [[ui.lineEdit_Quantita.text(), "="]],
                     "misura_di_massima" : [[ui.lineEdit_MisuraMax.text(), ">="], [ui.lineEdit_MisuraMax2.text(), "<="]],
@@ -103,5 +108,5 @@ cwd = p.GetString("MacroPath")
 Form = QtWidgets.QWidget()
 ui = interfaccia.Ui_Form()
 ui.setupUi(Form)
-InizializzaDati()
+InizializzaIterfaccia()
 Form.show()

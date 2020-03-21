@@ -14,7 +14,13 @@ def InizializzaDati():
     for element in materiali:
         nome_materiale = element[0]
         peso_specifico = element[1]
-        ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", peso_specifico)
+        ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", {"nome" : nome_materiale, "peso_specifico" : peso_specifico})
+
+    denominazioni = leggiCSV(cwd + "/resources/denominazioni_profilo.csv")
+    for element in denominazioni:
+        nome_materiale = element[0]
+        peso_specifico = element[1]
+        ui.comboBox_Denominazione.addItem(element[0], element[1])
 
     ui.comboBox_Materiale.currentIndexChanged.connect(impostaMassa)
     impostaMassa()
@@ -27,7 +33,7 @@ def InizializzaDati():
     ui.AcceptButton.clicked.connect(SalvaDati)
 
 def impostaMassa():
-    peso_specifico = ui.comboBox_Materiale.currentData()
+    peso_specifico = ui.comboBox_Materiale.currentData()["peso_specifico"]
     ui.lineEdit_Massa.setText(str(calcolaMassa(peso_specifico)))
 
 def calcolaMassa(peso_specifico):
@@ -93,7 +99,7 @@ def SalvaDati():
         database.inserisci_riga((ui.lineEdit_Riferimento.text(),
                                 ui.lineEdit_CodicePadre.text(),
                                 ui.lineEdit_Macchina.text(),
-                                str(ui.comboBox_Materiale.currentData()),
+                                ui.comboBox_Materiale.currentData()["nome"],
                                 ui.comboBox_Denominazione.currentText(),
                                 ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
                                 ui.lineEdit_Nome.text(),
