@@ -4,7 +4,7 @@ import resources.finestra_salva as interfaccia
 import resources.database.database as database
 import csv, datetime, Spreadsheet, json
 
-def InizializzaDati():
+def InizializzaIterfaccia():
 
     clienti = leggiCSV(cwd + "/resources/clienti.csv")
     for element in clienti:
@@ -18,17 +18,17 @@ def InizializzaDati():
 
     denominazioni = leggiCSV(cwd + "/resources/denominazioni_profilo.csv")
     for element in denominazioni:
-        nome_materiale = element[0]
-        peso_specifico = element[1]
         ui.comboBox_Denominazione.addItem(element[0], element[1])
 
     ui.comboBox_Materiale.currentIndexChanged.connect(impostaMassa)
     impostaMassa()
-    
+
+    ui.lineEdit_Riferimento.setStyleSheet("color: rgb(x255,0,0)")
+
     ui.DateTimeEdit_Data.setDateTime(datetime.datetime.now())
     
     aggiungiBoundBox()
-    
+
     ui.CancelButton.clicked.connect(ChiudiApplicazione)
     ui.AcceptButton.clicked.connect(SalvaDati)
 
@@ -95,6 +95,11 @@ def SalvaDati():
 
     connesso = database.connetti(cwd)
     if connesso:
+
+        condizioni = {"riferimento" : [[ "%%%s%%" % ui.lineEdit_Riferimento.text(), "="]]}
+        tabella = database.interroga_database(condizioni)
+
+        print(tabella)
 
         database.inserisci_riga((ui.lineEdit_Riferimento.text(),
                                 ui.lineEdit_CodicePadre.text(),
@@ -198,12 +203,11 @@ if len(objs) >= 1:
             Form = QtWidgets.QWidget()
             ui = interfaccia.Ui_Form()
             ui.setupUi(Form)
-            InizializzaDati()
+            InizializzaIterfaccia()
             Form.show()
         except:
             qm = QtWidgets.QMessageBox
             question = qm.information(None, "Errore file di configurazione", "File di configurazione non esistente o non leggibile.")
-
     else:
         qm = QtWidgets.QMessageBox
         qm.information(None, "Nessun solido selezionato", "Per avviare la macro è necessario selezionare un solido")
