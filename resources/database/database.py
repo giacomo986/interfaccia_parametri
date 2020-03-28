@@ -1,6 +1,5 @@
 import json
 import subprocess
-import sys
 
 try:
   import mysql.connector as mariadb
