@@ -6,7 +6,7 @@ try:
 except:
   try: 
     print("modulo mysql non trovato, provo a scaricarlo.")
-    subprocess.call(['pip', 'install', "mysql-connector-python"])
+    subprocess.call(['pip3', 'install', "mysql-connector-python"])
   except:
     print("comando pip non trovato, installare pip e riavviare FreeCAD")
 finally:
