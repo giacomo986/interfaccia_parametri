@@ -4,8 +4,11 @@ import subprocess
 try:
   import mysql.connector as mariadb
 except:
-  print("modulo mysql non trovato, provo a scaricarlo.")
-  subprocess.call(['pip', 'install', "mysql-connector-python"])
+  try: 
+    print("modulo mysql non trovato, provo a scaricarlo.")
+    subprocess.call(['pip', 'install', "mysql-connector-python"])
+  except:
+    print("comando pip non trovato, installare pip e riavviare FreeCAD")
 finally:
   import mysql.connector as mariadb
 
