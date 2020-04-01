@@ -4,10 +4,11 @@ import subprocess
 try:
   import mysql.connector as mariadb
 except:
-  print("modulo mysql non trovato, provo a scaricarlo.")
+  print("modulo mysql connector non trovato, provo a scaricarlo.")
   subprocess.call(['pip', 'install', "mysql-connector-python"])
 finally:
   import mysql.connector as mariadb
+  print("modulo mysql trovato")
 
 def connetti(cwd):
   global mariadb_connection, cursor
