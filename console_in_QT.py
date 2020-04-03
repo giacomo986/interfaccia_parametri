@@ -15,9 +15,23 @@ def non_block_read(output):
     except:
         return ''
 
-def Testo():
-    window.textEdit.append(non_block_read(sub_proc.stdout))
-    pass
+def aggiorna_Testo():
+    global text, text2
+    text = text + non_block_read(sub_proc.stdout)
+    contatore += 1
+
+    if sub_proc.poll() != None: # si .poll() == None Popen non ha finito
+        timer.stop()
+        return
+
+    if (text2 == text):
+        return
+    text2 = text
+    window.textEdit.setText(text2)
+
+def avvia_timer():
+    timer.timeout.connect(aggiorna_Testo)
+    timer.start(100)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
@@ -29,6 +43,9 @@ if __name__ == "__main__":
     window = loader.load(ui_file)
     ui_file.close()
     window.show()
-    window.pushButton.clicked.connect(Testo)
+    timer = QtCore.QTimer()
+    text, text2 = "", ""
+    window.pushButton.clicked.connect(avvia_timer)
+    window.textEdit.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignBottom)
 
     sys.exit(app.exec_())
