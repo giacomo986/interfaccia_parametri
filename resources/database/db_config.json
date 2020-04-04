@@ -1,6 +1,6 @@
 {
     "user": "freecad",
-    "password": "freecad.01!",
-    "host": "disegnidb.cluster-ck4wabjiyqke.eu-north-1.rds.amazonaws.com",
+    "password": "freecad",
+    "host": "172.17.0.2",
     "database": "DBTubi"
 }
