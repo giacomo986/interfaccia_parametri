@@ -2,7 +2,8 @@ import subprocess, sys, os, fcntl
 from PySide2 import QtWidgets, QtCore, QtGui, QtUiTools
 from subprocess import Popen, PIPE
 
-sub_proc = Popen("ping -c 10 localhost", stdout=PIPE, shell=True)
+#sub_proc = Popen("ping -c 10 localhost", stdout=PIPE, shell=True)
+sub_proc = Popen(["pip3 install scipy"], stdout=PIPE, shell=True)
 sub_outp = ""
 
 def non_block_read(output):
@@ -24,7 +25,7 @@ def aggiorna_Testo():
     text2 = text
     window.textEdit.setText(text2)
 
-    if sub_proc.poll() != None: # si .poll() == None Popen non ha finito
+    if sub_proc.poll() != None: # se (sub_proc.poll() == None) Popen non ha finito
         timer.stop()
         return
 
