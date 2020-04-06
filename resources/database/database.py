@@ -5,7 +5,10 @@ try:
   import mysql.connector as mariadb
 except:
   print("modulo mysql connector non trovato, provo a scaricarlo.")
-  subprocess.call(['pip', 'install', "mysql-connector-python"])
+  try:
+    subprocess.call([sys.executable, "-m", 'pip', 'install', "mysql-connector-python"], shell=True)
+  except:
+    subprocess.call(['pip', 'install', "mysql-connector-python"], shell=True)
 finally:
   import mysql.connector as mariadb
   print("modulo mysql trovato")
