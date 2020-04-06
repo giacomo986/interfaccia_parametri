@@ -18,16 +18,15 @@ def non_block_read(output):
 def aggiorna_Testo():
     global text, text2
     text = text + non_block_read(sub_proc.stdout)
-    contatore += 1
-
-    if sub_proc.poll() != None: # si .poll() == None Popen non ha finito
-        timer.stop()
-        return
 
     if (text2 == text):
         return
     text2 = text
     window.textEdit.setText(text2)
+
+    if sub_proc.poll() != None: # si .poll() == None Popen non ha finito
+        timer.stop()
+        return
 
 def avvia_timer():
     timer.timeout.connect(aggiorna_Testo)
