@@ -49,6 +49,9 @@ sudo apt install docker.io
 sudo systemctl enable docker
 ```
 - Aggiungere l'utente che esegue Docker al gruppo Docker per avere i diritti di eseguirlo. Riavviare il sistema operativo per aggiornare i diritti.
+```shell
+sudo usermod -aG docker $USER
+```
 - Scaricare Mariadb per Docker:
 ```shell
 docker pull mariadb/server
@@ -75,6 +78,20 @@ crontab -e
 ```text
 @reboot docker start mariadbtest
 ```
+- Per accedere alla linea di comando del container:
+```shell
+docker exec -it mariadbtest bash
+```
+- Per accedere direttamente al database nel container: 
+```shell
+mysql -h 172.17.0.2 -u root -p
+```
+
+CREATE USER 'freecad'@'%' IDENTIFIED BY 'freecad';
+CREATE DATABASE DBPezzi;
+
+
+GRANT ALL PRIVILEGES ON DBPezzi . * TO 'freecad'@'%';
 
 ## Risorse utilizzate:
 

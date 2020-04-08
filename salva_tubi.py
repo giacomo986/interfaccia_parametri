@@ -1,8 +1,12 @@
-import sys, os
+import sys, os, csv, datetime, Spreadsheet, json
 from PySide2 import QtWidgets, QtCore, QtGui
+
+p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Macro")
+cwd = p.GetString("MacroPath")
+sys.path.insert(1, cwd)
+
 import resources.finestra_salva as interfaccia
 import resources.database.database as database
-import csv, datetime, Spreadsheet, json
 
 def InizializzaIterfaccia():
 
@@ -14,7 +18,7 @@ def InizializzaIterfaccia():
     for element in materiali:
         nome_materiale = element[0]
         peso_specifico = element[1]
-        ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", {"nome" : nome_materiale, "peso_specifico" : peso_specifico})
+        ui.comboBox_Materiale.addItem("%s (%s g/cm³)" % (nome_materiale, peso_specifico), {"nome" : nome_materiale, "peso_specifico" : peso_specifico})
 
     denominazioni = leggiCSV(cwd + "/resources/denominazioni_profilo.csv")
     for element in denominazioni:
@@ -22,8 +26,6 @@ def InizializzaIterfaccia():
 
     ui.comboBox_Materiale.currentIndexChanged.connect(impostaMassa)
     impostaMassa()
-
-    ui.lineEdit_Riferimento.setStyleSheet("color: rgb(x255,0,0)")
 
     ui.DateTimeEdit_Data.setDateTime(datetime.datetime.now())
     
@@ -37,20 +39,36 @@ def impostaMassa():
     ui.lineEdit_Massa.setText(str(calcolaMassa(peso_specifico)))
 
 def calcolaMassa(peso_specifico):
-    objs = FreeCADGui.Selection.getSelection()
-    s = objs[0].Shape
+    s = oggetto_selezionato.Shape
     Volume = s.Volume # il volume è espresso in mm³
     Massa = round(float(peso_specifico) * (Volume / 1000.0), 3) # il peso specifico è espesso in g/cm³
     return Massa
 
 def aggiungiBoundBox():
-    objs = FreeCADGui.Selection.getSelection()
-    s = objs[0].Shape
+    s = oggetto_selezionato.Shape
     boundBox_= s.BoundBox
 
     ui.comboBox_MisuraMax.addItem("lunghezza asse x: " + str(round(boundBox_.XLength, 3)), boundBox_.XLength)
     ui.comboBox_MisuraMax.addItem("lunghezza asse y: " + str(round(boundBox_.YLength, 3)), boundBox_.YLength)
     ui.comboBox_MisuraMax.addItem("lunghezza asse z: " + str(round(boundBox_.ZLength, 3)), boundBox_.ZLength)
+
+def esporta_e_linka():
+    selectedObjs = FreeCADGui.Selection.getSelection()[0]
+
+    nome = selectedObjs.Label
+
+    Documento_originale = App.ActiveDocument
+
+    Documento_nuovo = App.newDocument(nome)
+
+    Documento_nuovo.saveAs("/home/giacomo/%s.FCStd" % nome)
+
+    corpo = Documento_nuovo.moveObject(selectedObjs, True)
+
+    Documento_nuovo.saveAs("/home/giacomo/%s.FCStd" % nome)
+
+    Documento_originale.addObject('App::Link',nome).setLink(corpo)
+    pass
 
 def SalvaDati():
     if ui.lineEdit_Riferimento.text() == "":
@@ -58,14 +76,14 @@ def SalvaDati():
         question = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
         return
 
-    Documento_nuovo = App.newDocument(ui.lineEdit_Riferimento.text())
-    corpo = Documento_nuovo.copyObject(objs[0], True)
+    Documento_nuovo = FreeCAD.newDocument(ui.lineEdit_Riferimento.text())
+    corpo = Documento_nuovo.copyObject(oggetto_selezionato, True)
     corpo.Label = ui.lineEdit_Riferimento.text()
     if ui.lineEdit_CodicePadre.text():
         Parte = Documento_nuovo.addObject('App::Part', ui.lineEdit_CodicePadre.text())
         Parte.addObject(corpo)
     
-    App.setActiveDocument(ui.lineEdit_Riferimento.text())
+    FreeCAD.setActiveDocument(ui.lineEdit_Riferimento.text())
 
     sheet = crea_spreadsheet()
     popola_spreadsheet(sheet)
@@ -77,7 +95,7 @@ def SalvaDati():
 
     os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
 
-    nomeFile = str(filePath + ui.lineEdit_Riferimento.text() + ".FCStd") # imposta il nome del file da salvare
+    nomeFile = str("%s%s.FCStd" % (filePath, ui.lineEdit_Riferimento.text())) # imposta il nome del file da salvare
 
     if os.path.exists(nomeFile):
         qm = QtWidgets.QMessageBox
@@ -120,7 +138,7 @@ def SalvaDati():
         qm = QtWidgets.QMessageBox
         question = qm.information(None, "Database non raggiungibile", "Il database non è raggiungibile, assicurarsi che i dati di accesso siano corretti e che il database sia avviato.")
         return
-    App.closeDocument(ui.lineEdit_Riferimento.text())
+    FreeCAD.closeDocument(ui.lineEdit_Riferimento.text())
 
     ChiudiApplicazione()
 
@@ -134,7 +152,7 @@ def leggiCSV(PercorsoFile):
     return lista
 
 def crea_spreadsheet():
-    sheet = App.ActiveDocument.addObject("Spreadsheet::Sheet")
+    sheet = FreeCAD.ActiveDocument.addObject("Spreadsheet::Sheet")
     sheet.Label = "SS_%s" % ui.lineEdit_Riferimento.text()
     return sheet
 
@@ -185,19 +203,15 @@ def ChiudiApplicazione():
 # La macro comincia verificando se è stato selezionato un solido da cui estrapolare le dimensioni
 objs = FreeCADGui.Selection.getSelection()
 if len(objs) >= 1:
-    if hasattr(objs[0], "Shape"): # Se il primo oggetto della selezione è un solido allora la macro richiama la finestra
-        
-        # Cerca la cartella dove sono situate le macro e salva il percorso.
-        p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Macro")
-        cwd = p.GetString("MacroPath")
-
+    oggetto_selezionato = objs[0]
+    if hasattr(oggetto_selezionato, "Shape"): # Se il primo oggetto della selezione è un solido allora la macro richiama la finestra
         # apre il file di configurazione che contiene il percorso di salvataggio dei disegni
         try:
-            with open(cwd + "/resources/macro_config.json", "r") as read_file:
+            with open("%s/resources/macro_config.json" % cwd, "r") as read_file:
                 config = json.load(read_file)
             Percorso_disegni = config["Percorso_disegni"]
 
-            Documento_originale = App.ActiveDocument # Salva un riferimento del documento originale aperto per comodità
+            Documento_originale = FreeCAD.ActiveDocument # Salva un riferimento del documento originale aperto per comodità
         
             # Crea la finestra
             Form = QtWidgets.QWidget()

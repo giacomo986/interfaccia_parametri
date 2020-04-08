@@ -23,7 +23,7 @@ def connetti(cwd):
   try:
     mariadb_connection = mariadb.connect(**config)
     cursor = mariadb_connection.cursor(buffered=True)
-    verifica_tabella_database()
+    verifica_tabelle_database()
     return True
   except:
     return False
@@ -32,15 +32,17 @@ def disconnetti():
   cursor.close()
   mariadb_connection.close()
 
-def Crea_tabella():
-  cursor.execute( "CREATE TABLE IF NOT EXISTS tubi ("
-                  "   task_id INT AUTO_INCREMENT PRIMARY KEY,"
+def crea_tabella_parti():
+  cursor.execute( "CREATE TABLE IF NOT EXISTS parti ("
+                  "   parte_id INT AUTO_INCREMENT PRIMARY KEY,"
                   "   riferimento TEXT NOT NULL,"
                   "   codice_padre TEXT NOT NULL,"
+                  "   FOREIGN KEY (id_codice_padre) REFERENCES assiemi(assieme_id), "
                   "   macchina TEXT NOT NULL,"
                   "   materiale TEXT NOT NULL,"
                   "   denominazione_profilo TEXT NOT NULL,"
                   "   data_creazione DATETIME NOT NULL,"
+                  "   ultima_modifica DATETIME NOT NULL,"
                   "   nome TEXT NOT NULL,"
                   "   codice TEXT NOT NULL,"
                   "   cliente TEXT NOT NULL,"
@@ -50,19 +52,35 @@ def Crea_tabella():
                   "   percorso TEXT NOT NULL"
                   ")  ENGINE=INNODB;")
 
+def crea_tabella_assiemi():
+  cursor.execute( "CREATE TABLE IF NOT EXISTS assiemi ("
+                  "   assieme_id INT AUTO_INCREMENT PRIMARY KEY,"
+                  "   codice_padre TEXT NOT NULL,"
+                  "   macchina TEXT NOT NULL,"
+                  "   data_creazione DATETIME NOT NULL,"
+                  "   ultima_modifica DATETIME NOT NULL,"
+                  "   cliente TEXT NOT NULL,"
+                  "   percorso TEXT NOT NULL"
+                  ")  ENGINE=INNODB;")
+
 def inserisci_riga(dati):
-  campi_tubo = ("INSERT INTO tubi "
+  campi_tubo = ("INSERT INTO parti "
                 "(riferimento, codice_padre, macchina, materiale, denominazione_profilo, data_creazione, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso)"
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
   cursor.execute(campi_tubo, dati)
   mariadb_connection.commit()
 
-def verifica_tabella_database():
-  cursor.execute("SHOW TABLES LIKE 'tubi';")
+def verifica_tabelle_database():
+  cursor.execute("SHOW TABLES LIKE 'assiemi';")
   tabella = cursor.fetchone()
   if not tabella:
-    Crea_tabella()
+    crea_tabella_assiemi()
+
+  cursor.execute("SHOW TABLES LIKE 'parti';")
+  tabella = cursor.fetchone()
+  if not tabella:
+    crea_tabella_parti()
 
 def interroga_database(condizioni):
   query = ("SELECT "
@@ -79,7 +97,7 @@ def interroga_database(condizioni):
           "misura_di_massima, "
           "massa, "
           "percorso "
-          "FROM tubi")
+          "FROM parti")
 
   # controlla se il dizionario contiene dati per filtrare la query
   if condizioni:
