@@ -67,9 +67,9 @@ def crea_tabella_assiemi():
                   ")  ENGINE=INNODB;")
 
 def inserisci_riga_assiemi(dati):
-  campi_tubo = ("INSERT INTO parti "
-                "(riferimento, codice_padre, id_codice_padre, macchina, materiale, denominazione_profilo, data_creazione, ultima_modifica, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso)"
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+  campi_tubo = ("INSERT INTO assiemi "
+                "(codice_padre, macchina, data_creazione, ultima_modifica, cliente, percorso)"
+                "VALUES (%s, %s, %s, %s, %s, %s);")
   
   cursor.execute(campi_tubo, dati)
   mariadb_connection.commit()
@@ -77,7 +77,7 @@ def inserisci_riga_assiemi(dati):
 def inserisci_riga_parti(dati):
   campi_tubo = ("INSERT INTO parti "
                 "(riferimento, codice_padre, id_codice_padre, macchina, materiale, denominazione_profilo, data_creazione, ultima_modifica, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso)"
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);")
 
   cursor.execute(campi_tubo, dati)
   mariadb_connection.commit()

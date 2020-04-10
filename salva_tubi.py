@@ -123,10 +123,12 @@ def SalvaDati():
 
         database.inserisci_riga_parti((ui.lineEdit_Riferimento.text(),
                                 ui.lineEdit_CodicePadre.text(),
+                                "(SELECT assieme_id FROM assiemi WHERE codice_padre = ‘%s’)" % ui.lineEdit_CodicePadre.text(),
                                 ui.lineEdit_Macchina.text(),
                                 ui.comboBox_Materiale.currentData()["nome"],
                                 ui.comboBox_Denominazione.currentText(),
                                 ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
+                                ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
                                 ui.lineEdit_Nome.text(),
                                 ui.lineEdit_Codice.text(),
                                 ui.comboBox_Cliente.currentText(),
@@ -169,7 +171,7 @@ def popola_spreadsheet(sheet):
     sheet.set("B3", ui.lineEdit_Macchina.text())
 
     sheet.set("A4", "Materiale:")
-    sheet.set("B4", str(ui.comboBox_Materiale.currentData()))
+    sheet.set("B4", str(ui.comboBox_Materiale.currentData()["nome"]))
 
     sheet.set("A5", "Denominazione profilo:")
     sheet.set("B5", ui.comboBox_Denominazione.currentText())
@@ -177,20 +179,28 @@ def popola_spreadsheet(sheet):
     sheet.set("A6", "Data di creazione:")
     sheet.set("B6", ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"))
 
-    sheet.set("A7", "Nome:")
-    sheet.set("B7", ui.lineEdit_Nome.text())
+    sheet.set("A7", "Data ultima modifica:")
+    sheet.set("B7", ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"))
 
-    sheet.set("A8", "Codice:")
-    sheet.set("B8", ui.lineEdit_Codice.text())
-    sheet.set("B10", ui.lineEdit_Quantita.text())
+    sheet.set("A8", "Nome:")
+    sheet.set("B8", ui.lineEdit_Nome.text())
 
-    sheet.set("A11", "Misura di massima:")
-    sheet.set("B11", str(ui.comboBox_MisuraMax.currentData()))
+    sheet.set("A9", "Codice:")
+    sheet.set("B9", ui.lineEdit_Codice.text())
 
-    sheet.set("A12", "Massa:")
-    sheet.set("B12", ui.lineEdit_Massa.text())
+    sheet.set("A10", "Cliente:")
+    sheet.set("B10", ui.comboBox_Cliente.currentText())
 
-    sheet.setAlignment("A1:A12", "right|vcenter|vimplied")
+    sheet.set("A11", "Quantità:")
+    sheet.set("B11", ui.lineEdit_Quantita.text())
+
+    sheet.set("A12", "Misura di massima:")
+    sheet.set("B12", str(ui.comboBox_MisuraMax.currentData()))
+
+    sheet.set("A13", "Massa:")
+    sheet.set("B13", ui.lineEdit_Massa.text())
+
+    sheet.setAlignment("A1:A13", "right|vcenter|vimplied")
     sheet.setAlignment("B1:B20", "center|vcenter|vimplied")
     sheet.recompute()
 
