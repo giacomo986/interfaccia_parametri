@@ -90,6 +90,9 @@ def SalvaDati():
     sheet = crea_spreadsheet()
     popola_spreadsheet(sheet)
 
+    if ui.lineEdit_CodicePadre.text():
+        Parte.addObject(sheet)
+
     filePath = Percorso_disegni + ui.comboBox_Cliente.currentText() + "/"
 
     if not(ui.lineEdit_CodicePadre.text() == ""):
@@ -123,7 +126,6 @@ def SalvaDati():
 
         database.inserisci_riga_parti((ui.lineEdit_Riferimento.text(),
                                 ui.lineEdit_CodicePadre.text(),
-                                "(SELECT assieme_id FROM assiemi WHERE codice_padre = ‘%s’)" % ui.lineEdit_CodicePadre.text(),
                                 ui.lineEdit_Macchina.text(),
                                 ui.comboBox_Materiale.currentData()["nome"],
                                 ui.comboBox_Denominazione.currentText(),

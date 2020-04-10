@@ -76,8 +76,8 @@ def inserisci_riga_assiemi(dati):
 
 def inserisci_riga_parti(dati):
   campi_tubo = ("INSERT INTO parti "
-                "(riferimento, codice_padre, id_codice_padre, macchina, materiale, denominazione_profilo, data_creazione, ultima_modifica, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso)"
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);")
+                "(riferimento, id_codice_padre, macchina, materiale, denominazione_profilo, data_creazione, ultima_modifica, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso)"
+                "VALUES (%s, (SELECT assieme_id FROM assiemi WHERE codice_padre = %s), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);")
 
   cursor.execute(campi_tubo, dati)
   mariadb_connection.commit()
@@ -95,20 +95,20 @@ def verifica_tabelle_database():
 
 def interroga_database(condizioni):
   query = ("SELECT "
-          "riferimento, "
-          "codice_padre, "
-          "macchina, "
-          "materiale, "
-          "denominazione_profilo, "
-          "data_creazione, "
-          "nome, "
-          "codice, "
-          "cliente, "
-          "quantità_per_disegno, "
-          "misura_di_massima, "
-          "massa, "
-          "percorso "
-          "FROM parti")
+          "p.riferimento, "
+          "a.codice_padre, "
+          "p.macchina, "
+          "p.materiale, "
+          "p.denominazione_profilo, "
+          "p.data_creazione, "
+          "p.nome, "
+          "p.codice, "
+          "p.cliente, "
+          "p.quantità_per_disegno, "
+          "p.misura_di_massima, "
+          "p.massa, "
+          "p.percorso "
+          "FROM assiemi a, parti p")
 
   # controlla se il dizionario contiene dati per filtrare la query
   if condizioni:
@@ -120,7 +120,7 @@ def interroga_database(condizioni):
         if j[0]: # se esiste un valore di confronto diverso da ""
           if contatore > 0:
             stringa = stringa + "AND "
-          stringa = stringa + "%s %s '%s' " % (i, j[1], j[0]) # aggiunge la condizione con i = nome della colonna, j[1] = operazione da copiere (es: "<="), j[0] = valore di confronto
+          stringa = stringa + "%s %s '%s' " % (i, j[1], j[0]) # aggiunge la condizione con i = nome della colonna, j[1] = operazione da copiere (es: "<=", "LIKE"), j[0] = valore di confronto
           contatore += 1
     if contatore > 0:
       query = query + " WHERE " + stringa
