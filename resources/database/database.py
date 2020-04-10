@@ -23,10 +23,11 @@ def connetti(cwd):
   try:
     mariadb_connection = mariadb.connect(**config)
     cursor = mariadb_connection.cursor(buffered=True)
-    verifica_tabelle_database()
-    return True
   except:
     return False
+
+  verifica_tabelle_database()
+  return True
 
 def disconnetti():
   cursor.close()
@@ -37,7 +38,9 @@ def crea_tabella_parti():
                   "   parte_id INT AUTO_INCREMENT PRIMARY KEY,"
                   "   riferimento TEXT NOT NULL,"
                   "   codice_padre TEXT NOT NULL,"
-                  "   FOREIGN KEY (id_codice_padre) REFERENCES assiemi(assieme_id), "
+                  "   id_codice_padre INT NOT NULL,"
+                  "   INDEX (id_codice_padre),"
+                  "   FOREIGN KEY (id_codice_padre) REFERENCES assiemi(assieme_id),"
                   "   macchina TEXT NOT NULL,"
                   "   materiale TEXT NOT NULL,"
                   "   denominazione_profilo TEXT NOT NULL,"
@@ -54,7 +57,7 @@ def crea_tabella_parti():
 
 def crea_tabella_assiemi():
   cursor.execute( "CREATE TABLE IF NOT EXISTS assiemi ("
-                  "   assieme_id INT AUTO_INCREMENT PRIMARY KEY,"
+                  "   assieme_id INT AUTO_INCREMENT, PRIMARY KEY (assieme_id),"
                   "   codice_padre TEXT NOT NULL,"
                   "   macchina TEXT NOT NULL,"
                   "   data_creazione DATETIME NOT NULL,"
@@ -63,10 +66,18 @@ def crea_tabella_assiemi():
                   "   percorso TEXT NOT NULL"
                   ")  ENGINE=INNODB;")
 
-def inserisci_riga(dati):
+def inserisci_riga_assiemi(dati):
   campi_tubo = ("INSERT INTO parti "
-                "(riferimento, codice_padre, macchina, materiale, denominazione_profilo, data_creazione, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso)"
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+                "(riferimento, codice_padre, id_codice_padre, macchina, materiale, denominazione_profilo, data_creazione, ultima_modifica, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso)"
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+  
+  cursor.execute(campi_tubo, dati)
+  mariadb_connection.commit()
+
+def inserisci_riga_parti(dati):
+  campi_tubo = ("INSERT INTO parti "
+                "(riferimento, codice_padre, id_codice_padre, macchina, materiale, denominazione_profilo, data_creazione, ultima_modifica, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso)"
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
   cursor.execute(campi_tubo, dati)
   mariadb_connection.commit()

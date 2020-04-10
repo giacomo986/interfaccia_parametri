@@ -29,6 +29,8 @@ def InizializzaIterfaccia():
 
     ui.DateTimeEdit_Data.setDateTime(datetime.datetime.now())
     
+    ui.DateTimeEdit_ultima_modifica.setDateTime(datetime.datetime.now())
+    
     aggiungiBoundBox()
 
     ui.CancelButton.clicked.connect(ChiudiApplicazione)
@@ -57,9 +59,9 @@ def esporta_e_linka():
 
     nome = selectedObjs.Label
 
-    Documento_originale = App.ActiveDocument
+    Documento_originale = FreeCAD.ActiveDocument
 
-    Documento_nuovo = App.newDocument(nome)
+    Documento_nuovo = FreeCAD.newDocument(nome)
 
     Documento_nuovo.saveAs("/home/giacomo/%s.FCStd" % nome)
 
@@ -119,7 +121,7 @@ def SalvaDati():
 
         print(tabella)
 
-        database.inserisci_riga((ui.lineEdit_Riferimento.text(),
+        database.inserisci_riga_parti((ui.lineEdit_Riferimento.text(),
                                 ui.lineEdit_CodicePadre.text(),
                                 ui.lineEdit_Macchina.text(),
                                 ui.comboBox_Materiale.currentData()["nome"],

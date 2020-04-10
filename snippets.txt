@@ -70,3 +70,7 @@ App.ActiveDocument.recompute()
 App.activeDocument().ProjGroup.addProjection('Left')
 App.activeDocument().ProjGroup.addProjection('Top')
 App.activeDocument().ProjGroup.addProjection('Left')
+
+INSERT INTO joke(joke_text, joke_date, author_id)
+    -> VALUES (‘Humpty Dumpty had a great fall.’, ‘1899–03–13’, (SELECT id FROM author WHERE author_name = ‘Famous Anthony’));
+ Query OK, 1 row affected (0.03 sec)
