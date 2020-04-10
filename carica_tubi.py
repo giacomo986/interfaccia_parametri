@@ -1,5 +1,11 @@
 import sys, os, csv, datetime, Spreadsheet, json
+from PySide2 import QtWidgets, QtCore, QtGuion
 from PySide2 import QtWidgets, QtCore, QtGui
+
+p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Macro")
+cwd = p.GetString("MacroPath")
+sys.path.insert(1, cwd)
+
 import resources.finestra_carica as interfaccia
 from resources.CsvTableModelClass import CsvTableModel
 import resources.database.database as database
