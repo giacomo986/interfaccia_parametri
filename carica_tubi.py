@@ -1,5 +1,4 @@
 import sys, os, csv, datetime, Spreadsheet, json
-from PySide2 import QtWidgets, QtCore, QtGuion
 from PySide2 import QtWidgets, QtCore, QtGui
 
 p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Macro")
