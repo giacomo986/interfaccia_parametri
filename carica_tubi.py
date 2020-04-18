@@ -50,7 +50,8 @@ def recupera_dati():
     global tabella
     connesso = database.connetti(cwd)
     if connesso:
-        condizioni = {"riferimento" : [[ "%%%s%%" % ui.lineEdit_Riferimento.text(), "LIKE"]]}
+        #condizioni = {"p.riferimento" : [[ "%%%s%%" % ui.lineEdit_Riferimento.text(), "LIKE"]]}
+        condizioni = leggi_campi()
         tabella = database.interroga_database(condizioni)
         database.disconnetti()
         model = CsvTableModel(tabella)

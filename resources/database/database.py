@@ -108,7 +108,7 @@ def interroga_database(condizioni):
           "p.misura_di_massima, "
           "p.massa, "
           "p.percorso "
-          "FROM assiemi a, parti p")
+          "FROM parti p inner join assiemi a on p.id_codice_padre = a.assieme_id ")
 
   # controlla se il dizionario contiene dati per filtrare la query
   if condizioni:
@@ -126,7 +126,7 @@ def interroga_database(condizioni):
       query = query + " WHERE " + stringa
 
   query = query + ";"
-  #print(query)
+  #print("query = %s" % query)
   cursor.execute(query)
   tabella = cursor.fetchall()
   return tabella
