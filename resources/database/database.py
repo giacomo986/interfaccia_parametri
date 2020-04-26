@@ -37,7 +37,6 @@ def crea_tabella_parti():
   cursor.execute( "CREATE TABLE IF NOT EXISTS parti ("
                   "   parte_id INT AUTO_INCREMENT PRIMARY KEY,"
                   "   riferimento TEXT NOT NULL,"
-                  "   codice_padre TEXT NOT NULL,"
                   "   id_codice_padre INT NOT NULL,"
                   "   INDEX (id_codice_padre),"
                   "   FOREIGN KEY (id_codice_padre) REFERENCES assiemi(assieme_id),"
@@ -67,18 +66,38 @@ def crea_tabella_assiemi():
                   ")  ENGINE=INNODB;")
 
 def inserisci_riga_assiemi(dati):
-  campi_tubo = ("INSERT INTO assiemi "
+  campi_assieme = ("INSERT INTO assiemi "
                 "(codice_padre, macchina, data_creazione, ultima_modifica, cliente, percorso)"
                 "VALUES (%s, %s, %s, %s, %s, %s);")
   
-  cursor.execute(campi_tubo, dati)
+  cursor.execute(campi_assieme, dati)
   mariadb_connection.commit()
 
 def inserisci_riga_parti(dati):
   campi_tubo = ("INSERT INTO parti "
-                "(riferimento, id_codice_padre, macchina, materiale, denominazione_profilo, data_creazione, ultima_modifica, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso)"
+                "(riferimento, id_codice_padre, macchina, materiale, denominazione_profilo, data_creazione, ultima_modifica, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso) "
                 "VALUES (%s, (SELECT assieme_id FROM assiemi WHERE codice_padre = %s), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);")
 
+  cursor.execute(campi_tubo, dati)
+  mariadb_connection.commit()
+
+def aggiorna_riga_parti(dati): # To Do: Finire query update 
+  campi_tubo = ("UPDATE parti SET " 
+                "id_codice_padre = %s, " % dati[1] +
+                "macchina = %s, " % dati[2] +
+                "materiale = %s, " % dati[3] +
+                "denominazione_profilo = %s, " % dati[4] +
+                "data_creazione = %s, " % dati[5] +
+                "ultima_modifica = %s, " % dati[6] +
+                "nome = %s, " % dati[7] +
+                "codice = %s, " % dati[8] +
+                "cliente = %s, " % dati[9] +
+                "quantità_per_disegno = %s, " % dati[10] +
+                "misura_di_massima = %s, " % dati[11] +
+                "massa = %s, " % dati[12] +
+                "percorso = %s" % dati[13] +
+                "WHERE riferimento = %s;" % dati[0])
+  
   cursor.execute(campi_tubo, dati)
   mariadb_connection.commit()
 

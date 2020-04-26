@@ -52,7 +52,7 @@ def recupera_dati():
     if connesso:
         #condizioni = {"p.riferimento" : [[ "%%%s%%" % ui.lineEdit_Riferimento.text(), "LIKE"]]}
         condizioni = leggi_campi()
-        tabella = database.interroga_database(condizioni)
+        tabella = database.interroga_tabella_parti(condizioni)
         database.disconnetti()
         model = CsvTableModel(tabella)
         ui.tableView.setModel(model)

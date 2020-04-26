@@ -120,25 +120,32 @@ def SalvaDati():
     if connesso:
 
         condizioni = {"riferimento" : [[ "%%%s%%" % ui.lineEdit_Riferimento.text(), "="]]}
-        tabella = database.interroga_database(condizioni)
+        disegno_esistente = database.interroga_tabella_parti(condizioni)
 
-        print(tabella)
-
-        database.inserisci_riga_parti((ui.lineEdit_Riferimento.text(),
-                                ui.lineEdit_CodicePadre.text(),
-                                ui.lineEdit_Macchina.text(),
-                                ui.comboBox_Materiale.currentData()["nome"],
-                                ui.comboBox_Denominazione.currentText(),
-                                ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
-                                ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
-                                ui.lineEdit_Nome.text(),
-                                ui.lineEdit_Codice.text(),
-                                ui.comboBox_Cliente.currentText(),
-                                int(ui.lineEdit_Quantita.text()),
-                                ui.comboBox_MisuraMax.currentData(),
-                                float(ui.lineEdit_Massa.text()),
-                                nomeFile)
-                                )
+        if disegno_esistente:
+            print("disegno esistente: %s" % disegno_esistente)
+            pass
+        else:
+            database.inserisci_riga_assiemi((ui.lineEdit_CodicePadre.text(),
+                                            ui.lineEdit_Macchina.text(),
+                                            ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
+                                            ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
+                                            ui.lineEdit_Codice.text(),
+                                            nomeFile))
+            database.inserisci_riga_parti((ui.lineEdit_Riferimento.text(),
+                                        ui.lineEdit_CodicePadre.text(),
+                                        ui.lineEdit_Macchina.text(),
+                                        ui.comboBox_Materiale.currentData()["nome"],
+                                        ui.comboBox_Denominazione.currentText(),
+                                        ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
+                                        ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
+                                        ui.lineEdit_Nome.text(),
+                                        ui.lineEdit_Codice.text(),
+                                        ui.comboBox_Cliente.currentText(),
+                                        int(ui.lineEdit_Quantita.text()),
+                                        ui.comboBox_MisuraMax.currentData(),
+                                        float(ui.lineEdit_Massa.text()),
+                                        nomeFile))
         database.disconnetti()
     else:
         qm = QtWidgets.QMessageBox
