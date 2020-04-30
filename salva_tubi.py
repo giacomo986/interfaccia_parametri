@@ -87,12 +87,6 @@ def SalvaDati():
     
     FreeCAD.setActiveDocument(ui.lineEdit_Riferimento.text())
 
-    sheet = crea_spreadsheet()
-    popola_spreadsheet(sheet)
-
-    if ui.lineEdit_CodicePadre.text():
-        Parte.addObject(sheet)
-
     filePath = Percorso_disegni + ui.comboBox_Cliente.currentText() + "/"
 
     if not(ui.lineEdit_CodicePadre.text() == ""):
@@ -102,28 +96,15 @@ def SalvaDati():
 
     nomeFile = str("%s%s.FCStd" % (filePath, ui.lineEdit_Riferimento.text())) # imposta il nome del file da salvare
 
-    if os.path.exists(nomeFile):
-        qm = QtWidgets.QMessageBox
-        question = qm.question(None, "File già esistente", "File già esistente. Vuoi sovrascrivere il file?", qm.Yes | qm.No)
-        if (question == qm.No):
-            qm.information(None, "Informazione", "Nessuna modifica")
-        else:
-            Documento_nuovo.saveAs(nomeFile)
-            qm = QtWidgets.QMessageBox
-            qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
-    else:
-        Documento_nuovo.saveAs(nomeFile)
-        qm = QtWidgets.QMessageBox
-        qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
 
+    # Si connette al database, verifica che il file non sia già esistente e salva i dati con il percorso
     connesso = database.connetti(cwd)
     if connesso:
 
-        condizioni = {"riferimento" : [[ "%%%s%%" % ui.lineEdit_Riferimento.text(), "="]]}
-        disegno_esistente = database.interroga_tabella_parti(condizioni)
+        condizione_assieme = ui.lineEdit_CodicePadre.text()
+        assieme_esistente = database.interroga_tabella_parti(condizione_assieme)
 
-        if disegno_esistente:
-            print("disegno esistente: %s" % disegno_esistente)
+        if assieme_esistente:
             pass
         else:
             database.inserisci_riga_assiemi((ui.lineEdit_CodicePadre.text(),
@@ -132,6 +113,15 @@ def SalvaDati():
                                             ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
                                             ui.lineEdit_Codice.text(),
                                             nomeFile))
+
+
+        condizione_parte = ui.lineEdit_Riferimento.text()
+        disegno_esistente = database.interroga_tabella_parti(condizione_parte)
+
+        if disegno_esistente:
+            print("disegno esistente: %s" % disegno_esistente)
+            pass
+        else:
             database.inserisci_riga_parti((ui.lineEdit_Riferimento.text(),
                                         ui.lineEdit_CodicePadre.text(),
                                         ui.lineEdit_Macchina.text(),
@@ -151,6 +141,28 @@ def SalvaDati():
         qm = QtWidgets.QMessageBox
         question = qm.information(None, "Database non raggiungibile", "Il database non è raggiungibile, assicurarsi che i dati di accesso siano corretti e che il database sia avviato.")
         return
+
+
+    sheet = crea_spreadsheet()
+    popola_spreadsheet(sheet)
+
+    if ui.lineEdit_CodicePadre.text():
+        Parte.addObject(sheet)
+
+    if os.path.exists(nomeFile):
+        qm = QtWidgets.QMessageBox
+        question = qm.question(None, "File già esistente", "File già esistente. Vuoi sovrascrivere il file?", qm.Yes | qm.No)
+        if (question == qm.No):
+            qm.information(None, "Informazione", "Nessuna modifica")
+        else:
+            Documento_nuovo.saveAs(nomeFile)
+            qm = QtWidgets.QMessageBox
+            qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
+    else:
+        Documento_nuovo.saveAs(nomeFile)
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
+
     FreeCAD.closeDocument(ui.lineEdit_Riferimento.text())
 
     ChiudiApplicazione()

@@ -112,7 +112,15 @@ def verifica_tabelle_database():
   if not tabella:
     crea_tabella_parti()
 
-def interroga_database(condizioni):
+def trova_id_parte(condizione):
+  query = ("SELECT parte_id "
+          "FROM parti WHERE riferimento = %s;" % condizione)
+  #print("query = %s" % query)
+  cursor.execute(query)
+  tabella = cursor.fetchall()
+  return tabella
+
+def interroga_tabella_parti(condizioni):
   query = ("SELECT "
           "p.riferimento, "
           "a.codice_padre, "
