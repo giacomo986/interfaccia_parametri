@@ -114,7 +114,6 @@ def SalvaDati():
                                             ui.lineEdit_Codice.text(),
                                             nomeFile))
 
-
         condizione_parte = ui.lineEdit_Riferimento.text()
         disegno_esistente = database.interroga_tabella_parti(condizione_parte)
 
