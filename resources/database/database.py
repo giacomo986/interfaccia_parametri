@@ -114,7 +114,15 @@ def verifica_tabelle_database():
 
 def trova_id_parte(condizione):
   query = ("SELECT parte_id "
-          "FROM parti WHERE riferimento = %s;" % condizione)
+          "FROM parti WHERE riferimento = '%s';" % condizione)
+  #print("query = %s" % query)
+  cursor.execute(query)
+  tabella = cursor.fetchall()
+  return tabella
+
+def trova_id_assieme(condizione):
+  query = ("SELECT assieme_id "
+          "FROM assiemi WHERE codice_padre = '%s';" % condizione)
   #print("query = %s" % query)
   cursor.execute(query)
   tabella = cursor.fetchall()

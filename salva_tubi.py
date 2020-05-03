@@ -92,8 +92,6 @@ def SalvaDati():
     if not(ui.lineEdit_CodicePadre.text() == ""):
         filePath = filePath + ui.lineEdit_CodicePadre.text() + "/"
 
-    os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
-
     nomeFile = str("%s%s.FCStd" % (filePath, ui.lineEdit_Riferimento.text())) # imposta il nome del file da salvare
 
 
@@ -102,9 +100,10 @@ def SalvaDati():
     if connesso:
 
         condizione_assieme = ui.lineEdit_CodicePadre.text()
-        assieme_esistente = database.interroga_tabella_parti(condizione_assieme)
+        assieme_esistente = database.trova_id_assieme(condizione_assieme)
 
         if assieme_esistente:
+            print("assieme esistente: %s" % assieme_esistente)
             pass
         else:
             database.inserisci_riga_assiemi((ui.lineEdit_CodicePadre.text(),
@@ -115,7 +114,7 @@ def SalvaDati():
                                             nomeFile))
 
         condizione_parte = ui.lineEdit_Riferimento.text()
-        disegno_esistente = database.interroga_tabella_parti(condizione_parte)
+        disegno_esistente = database.trova_id_parte(condizione_parte)
 
         if disegno_esistente:
             print("disegno esistente: %s" % disegno_esistente)
@@ -154,10 +153,12 @@ def SalvaDati():
         if (question == qm.No):
             qm.information(None, "Informazione", "Nessuna modifica")
         else:
+            os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
             Documento_nuovo.saveAs(nomeFile)
             qm = QtWidgets.QMessageBox
             qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
     else:
+        os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
         Documento_nuovo.saveAs(nomeFile)
         qm = QtWidgets.QMessageBox
         qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
