@@ -55,7 +55,7 @@ docker pull mariadb/server
 ```
 - Avviare la prima volta il container Mariadb:
 ```shell
-docker run --name mariadbtest -e MYSQL_ROOT_PASSWORD=mypass -d mariadb/server
+docker run --name mariadbtest -e MYSQL_ROOT_PASSWORD=mypass -d -p 3306:3306  mariadb/server
 ```
 - Per Avviare, fermare o riavviare il container Mariadb:
 ```shell
