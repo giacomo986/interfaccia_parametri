@@ -1,5 +1,6 @@
 import sys, os, csv, datetime, Spreadsheet, json
 from PySide2 import QtWidgets, QtCore, QtGui
+from PySide2.QtCore import Qt
 
 p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Macro")
 cwd = p.GetString("MacroPath")
@@ -228,6 +229,18 @@ def popola_spreadsheet(sheet):
 def ChiudiApplicazione():
     Form.close()
 
+# classe derivata da QWidget per aggiungere evento di tasto premuto
+class MainWindow(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.test_method()
+
+    def test_method(self):
+        print("Premuto il tasto Escape. Chiudo la finestra.")
+        self.close()
 
 ########################################
 ######## Punto d'ingresso macro ########
@@ -247,7 +260,8 @@ if len(objs) >= 1:
             Documento_originale = FreeCAD.ActiveDocument # Salva un riferimento del documento originale aperto per comodità
         
             # Crea la finestra
-            Form = QtWidgets.QWidget()
+            #Form = QtWidgets.QWidget()
+            Form = MainWindow()
             ui = interfaccia.Ui_Form()
             ui.setupUi(Form)
             InizializzaIterfaccia()

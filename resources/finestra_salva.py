@@ -7,6 +7,32 @@
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
+from Equation import Expression
+
+class LineEdit(QtWidgets.QLineEdit):
+
+    '''def focusInEvent(self, event):
+        print('focus in event')
+        # do custom stuff
+        super(LineEdit, self).focusInEvent(event)'''
+    
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Enter or event.key() == QtCore.Qt.Key_Return:
+            #print("Premuto tasto invio")
+            self.risolvi_espressione()
+        QtWidgets.QLineEdit.keyPressEvent(self, event)
+
+    '''def focusOutEvent(self, event):
+        print('focus out event')
+        # do custom stuff
+        super(LineEdit, self).focusOutEvent(event)'''
+    
+    def risolvi_espressione(self):
+        try:
+            espressione = Expression(self.text())
+            self.setText(str(espressione()))
+        except:
+            print("errore nella risoluzione della espressione. Assicurarsi che sia scritta in modo corretto senza caratteri estranei.")
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -32,7 +58,7 @@ class Ui_Form(object):
         self.label_3 = QtWidgets.QLabel(Form)
         self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
 
-        self.lineEdit_Macchina = QtWidgets.QLineEdit(Form)
+        self.lineEdit_Macchina = LineEdit(Form)
         self.gridLayout.addWidget(self.lineEdit_Macchina, 2, 6, 1, 1)
         
         self.label_4 = QtWidgets.QLabel(Form)
@@ -142,4 +168,3 @@ class Ui_Form(object):
         self.label_11.setText(_translate("Form", "Misura di massima:"))
         self.CancelButton.setText(_translate("Form", "Annulla"))
         self.AcceptButton.setText(_translate("Form", "Conferma"))
-
