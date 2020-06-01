@@ -1,19 +1,33 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'interfaccia.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.1
-#
-# WARNING! All changes made in this file will be lost!
-
 from PySide2 import QtCore, QtGui, QtWidgets
+from Equation import Expression
+
+class LineEdit_Expr(QtWidgets.QLineEdit):
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Enter or event.key() == QtCore.Qt.Key_Return:
+            #print("Premuto tasto invio")
+            self.risolvi_espressione()
+        QtWidgets.QLineEdit.keyPressEvent(self, event)
+
+    def focusOutEvent(self, event):
+        #print('focus out event')
+        self.risolvi_espressione()
+        QtWidgets.QLineEdit.focusOutEvent(self, event)
+    
+    def risolvi_espressione(self):
+        if self.text():
+            try:
+                espressione = Expression(self.text())
+                self.setText(str(espressione()))
+            except:
+                print("errore nella risoluzione della espressione. Assicurarsi che sia scritta in modo corretto senza caratteri estranei.")
+                self.setText("")
 
 class Ui_Form(object):
     def setupUi(self, Form):
         
         Form.resize(800, 600)
 
-        reg_ex = QtCore.QRegExp(r"[-+]?[0-9]*\.?[0-9]+") # Regular Expression per filtrare solo valori numerici dove necessario
+        reg_ex = QtCore.QRegExp(r"^([-+/*]?\d+(\.\d+)?)*") # Regular Expression per filtrare solo valori numerici dove necessario
 
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
 
@@ -57,17 +71,17 @@ class Ui_Form(object):
         self.comboBox_Denominazione = QtWidgets.QComboBox(Form)
         self.gridLayout.addWidget(self.comboBox_Denominazione, 4, 6, 1, 1)
 
-        self.lineEdit_Massa = QtWidgets.QLineEdit(Form)
+        self.lineEdit_Massa = LineEdit_Expr(Form)
         Massa_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Massa)
         self.lineEdit_Massa.setValidator(Massa_input_validator)
         self.gridLayout.addWidget(self.lineEdit_Massa, 11, 6, 1, 1)
 
-        self.lineEdit_Massa2 = QtWidgets.QLineEdit(Form)
+        self.lineEdit_Massa2 = LineEdit_Expr(Form)
         Massa2_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Massa2)
         self.lineEdit_Massa2.setValidator(Massa2_input_validator)
         self.gridLayout.addWidget(self.lineEdit_Massa2, 11, 7, 1, 1)
         
-        self.lineEdit_Quantita = QtWidgets.QLineEdit(Form)
+        self.lineEdit_Quantita = LineEdit_Expr(Form)
         Quantita_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Quantita)
         self.lineEdit_Quantita.setValidator(Quantita_input_validator)
         self.gridLayout.addWidget(self.lineEdit_Quantita, 9, 6, 1, 1)
@@ -75,10 +89,14 @@ class Ui_Form(object):
         self.lineEdit_Codice = QtWidgets.QLineEdit(Form)
         self.gridLayout.addWidget(self.lineEdit_Codice, 7, 6, 1, 1)
 
-        self.lineEdit_MisuraMax = QtWidgets.QLineEdit(Form)
+        self.lineEdit_MisuraMax = LineEdit_Expr(Form)
+        MisuraMax_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_MisuraMax)
+        self.lineEdit_MisuraMax.setValidator(MisuraMax_input_validator)
         self.gridLayout.addWidget(self.lineEdit_MisuraMax, 10, 6, 1, 1)
 
-        self.lineEdit_MisuraMax2 = QtWidgets.QLineEdit(Form)
+        self.lineEdit_MisuraMax2 = LineEdit_Expr(Form)
+        MisuraMax2_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_MisuraMax2)
+        self.lineEdit_MisuraMax2.setValidator(MisuraMax2_input_validator)
         self.gridLayout.addWidget(self.lineEdit_MisuraMax2, 10, 7, 1, 1)
 
         self.comboBox_Cliente = QtWidgets.QComboBox(Form)
@@ -130,7 +148,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Carica disegno"))
+        Form.setWindowTitle(_translate("Form", "Carica Assieme"))
         self.label_4.setText(_translate("Form", "Materiale:"))
         self.label_12.setText(_translate("Form", "Massa (grammi) (da ... a ...):"))
         self.label_7.setText(_translate("Form", "Nome:"))

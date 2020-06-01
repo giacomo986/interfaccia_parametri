@@ -1,31 +1,17 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'interfaccia.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.1
-#
-# WARNING! All changes made in this file will be lost!
-
 from PySide2 import QtCore, QtGui, QtWidgets
 from Equation import Expression
 
-class LineEdit(QtWidgets.QLineEdit):
-
-    '''def focusInEvent(self, event):
-        print('focus in event')
-        # do custom stuff
-        super(LineEdit, self).focusInEvent(event)'''
-    
+class LineEdit_Expr(QtWidgets.QLineEdit):
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Enter or event.key() == QtCore.Qt.Key_Return:
             #print("Premuto tasto invio")
             self.risolvi_espressione()
         QtWidgets.QLineEdit.keyPressEvent(self, event)
 
-    '''def focusOutEvent(self, event):
-        print('focus out event')
-        # do custom stuff
-        super(LineEdit, self).focusOutEvent(event)'''
+    def focusOutEvent(self, event):
+        #print('focus out event')
+        self.risolvi_espressione()
+        QtWidgets.QLineEdit.focusOutEvent(self, event)
     
     def risolvi_espressione(self):
         try:
@@ -33,13 +19,14 @@ class LineEdit(QtWidgets.QLineEdit):
             self.setText(str(espressione()))
         except:
             print("errore nella risoluzione della espressione. Assicurarsi che sia scritta in modo corretto senza caratteri estranei.")
-
+            self.setText("")
+ 
 class Ui_Form(object):
     def setupUi(self, Form):
         
         Form.resize(600, 500)
 
-        reg_ex = QtCore.QRegExp(r"[-+]?[0-9]*\.?[0-9]+") # Regular Expression per filtrare solo valori numerici dove necessario
+        reg_ex = QtCore.QRegExp(r"^([-+/*]\d+(\.\d+)?)*") # Regular Expression per filtrare solo valori numerici dove necessario
 
         self.gridLayout = QtWidgets.QGridLayout(Form)
 
@@ -58,7 +45,7 @@ class Ui_Form(object):
         self.label_3 = QtWidgets.QLabel(Form)
         self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
 
-        self.lineEdit_Macchina = LineEdit(Form)
+        self.lineEdit_Macchina = QtWidgets.QLineEdit(Form)
         self.gridLayout.addWidget(self.lineEdit_Macchina, 2, 6, 1, 1)
         
         self.label_4 = QtWidgets.QLabel(Form)
@@ -106,7 +93,7 @@ class Ui_Form(object):
         self.label_10 = QtWidgets.QLabel(Form)
         self.gridLayout.addWidget(self.label_10, 10, 0, 1, 1)
         
-        self.lineEdit_Quantita = QtWidgets.QLineEdit(Form)
+        self.lineEdit_Quantita = LineEdit_Expr(Form)
         Quantita_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Quantita)
         self.lineEdit_Quantita.setValidator(Quantita_input_validator)
         self.gridLayout.addWidget(self.lineEdit_Quantita, 10, 6, 1, 1)
@@ -120,9 +107,10 @@ class Ui_Form(object):
         self.label_12 = QtWidgets.QLabel(Form)
         self.gridLayout.addWidget(self.label_12, 12, 0, 1, 1)
 
-        self.lineEdit_Massa = QtWidgets.QLineEdit(Form)
+        self.lineEdit_Massa = LineEdit_Expr(Form)
         Massa_input_validator = QtGui.QRegExpValidator(reg_ex, self.lineEdit_Massa)
         self.lineEdit_Massa.setValidator(Massa_input_validator)
+        self.lineEdit_Massa.setReadOnly(True)
         self.gridLayout.addWidget(self.lineEdit_Massa, 12, 6, 1, 1)
     
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -140,7 +128,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Salva Informazioni"))
+        Form.setWindowTitle(_translate("Form", "Salva Informazioni Pezzo"))
         self.label_4.setText(_translate("Form", "Materiale:"))
         self.label_12.setText(_translate("Form", "Massa (grammi):"))
         self.label_7.setText(_translate("Form", "Nome:"))

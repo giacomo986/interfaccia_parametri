@@ -14,9 +14,32 @@ App.activeDocument().saveAs(u"/home/giacomo/puzzone.FCStd")
 def scriviCSV(PercorsoFile):
     with open(PercorsoFile, "w", newline="") as csvfile:
         writer = csv.writer(csvfile, delimiter=",")
-        writer.writerow(["Riferimento"] +
-                        ["Codice padre"] +
-                        ["Macchina"] +
+        writer.writerow(["Rifer
+class LineEdit_Expr(QtWidgets.QLineEdit):
+
+    '''def focusInEvent(self, event):
+        print('focus in event')
+        # do custom stuff
+        super(LineEdit, self).focusInEvent(event)'''
+    
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Enter or event.key() == QtCore.Qt.Key_Return:
+            #print("Premuto tasto invio")
+            self.risolvi_espressione()
+        QtWidgets.QLineEdit.keyPressEvent(self, event)
+
+    '''def focusOutEvent(self, event):
+        print('focus out event')
+        # do custom stuff
+        super(LineEdit, self).focusOutEvent(event)'''
+    
+    def risolvi_espressione(self):
+        try:
+            espressione = Expression(self.text())
+            self.setText(str(espressione()))
+        except:
+            print("errore nella risoluzione della espressione. Assicurarsi che sia scritta in modo corretto senza caratteri estranei.")
+
                         ["Materiale"] +
                         ["Denominazione profilo"] +
                         ["Data di creazione"] +
@@ -101,3 +124,33 @@ if __name__ == '__main__':
 	demo.show()
 
 	sys.exit(app.exec_())
+
+
+
+class LineEdit_Expr(QtWidgets.QLineEdit):
+
+    '''def focusInEvent(self, event):
+        print('focus in event')
+        # do custom stuff
+        super(LineEdit, self).focusInEvent(event)'''
+    
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Enter or event.key() == QtCore.Qt.Key_Return:
+            #print("Premuto tasto invio")
+            self.risolvi_espressione()
+        QtWidgets.QLineEdit.keyPressEvent(self, event)
+
+    '''def focusOutEvent(self, event):
+        print('focus out event')
+        # do custom stuff
+        super(LineEdit, self).focusOutEvent(event)'''
+    
+    def risolvi_espressione(self):
+        try:
+            espressione = Expression(self.text())
+            self.setText(str(espressione()))
+        except:
+            print("errore nella risoluzione della espressione. Assicurarsi che sia scritta in modo corretto senza caratteri estranei.")
+
+
+Gui.SendMsgToActiveView("Save")

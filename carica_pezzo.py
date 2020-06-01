@@ -12,19 +12,46 @@ import resources.database.database as database
 def InizializzaIterfaccia():
 
     ui.comboBox_Cliente.addItem("<Qualsiasi cliente>", False)
-    clienti = leggiCSV(cwd + "/resources/clienti.csv")
+    try:
+        clienti = leggiCSV(cwd + "/resources/clienti.csv")
+    except:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista clienti mancante o formattata male, controllare lista clienti al percorso: {}".format(cwd + "/resources/clienti.csv"))
+        return False
+    if not clienti:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista clienti vuota, popolare lista clienti nel percorso: {}".format(cwd + "/resources/clienti.csv"))
+        return False
     for element in clienti:
         ui.comboBox_Cliente.addItem(element[0], element[1])
     
     ui.comboBox_Materiale.addItem("<Qualsiasi materiale>", False)
-    materiali = leggiCSV(cwd + "/resources/materiali.csv")
+    try:
+        materiali = leggiCSV(cwd + "/resources/materiali.csv")
+    except:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista materiali mancante o formattata male, controllare lista materiali al percorso: {}".format(cwd + "/resources/materiali.csv"))
+        return False
+    if not materiali:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista materiali vuota, popolare lista materiali nel percorso: {}".format(cwd + "/resources/materiali.csv"))
+        return False
     for element in materiali:
         nome_materiale = element[0]
         peso_specifico = element[1]
         ui.comboBox_Materiale.addItem(nome_materiale + " (" + peso_specifico + " g/cm³)", peso_specifico)
 
     ui.comboBox_Denominazione.addItem("<Qualsiasi denominazione>", False)
-    denominazioni = leggiCSV(cwd + "/resources/denominazioni_profilo.csv")
+    try:
+        denominazioni = leggiCSV(cwd + "/resources/denominazioni_profilo.csv")
+    except:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista denominazioni o formattata male, controllare lista denominazioni al percorso: {}".format(cwd + "/resources/denominazioni_profilo.csv"))
+        return False
+    if not denominazioni:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista denominazioni vuota, popolare lista denominazioni nel percorso: {}".format(cwd + "/resources/denominazioni_profilo.csv"))
+        return False
     for element in denominazioni:
         ui.comboBox_Denominazione.addItem(element[0], element[1])
 
@@ -33,6 +60,7 @@ def InizializzaIterfaccia():
     ui.CancelButton.clicked.connect(ChiudiApplicazione)
     ui.SearchButton.clicked.connect(recupera_dati)
     ui.AcceptButton.clicked.connect(carica_documento)
+    return True
 
 def leggiCSV(PercorsoFile):
     lista = []
@@ -113,5 +141,6 @@ cwd = p.GetString("MacroPath")
 Form = QtWidgets.QWidget()
 ui = interfaccia.Ui_Form()
 ui.setupUi(Form)
-InizializzaIterfaccia()
-Form.show()
+tutto_ok = InizializzaIterfaccia()
+if tutto_ok:
+    Form.show()

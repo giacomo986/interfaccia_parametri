@@ -86,13 +86,19 @@ docker exec -it mariadbtest bash
 ```shell
 mysql -h 172.17.0.2 -u root -p
 ```
-
+- Creare un utente non amministratore all'interno di MariaDB: 
+```sql
 CREATE USER 'freecad'@'%' IDENTIFIED BY 'freecad';
+```
+Il simbolo '**%**' indica che l'utente è accessibile anche al di fuori del container.
+- Creare un database per la macro:
+```sql
 CREATE DATABASE DBPezzi;
-
-
+```
+- Coferire poteri d'accesso all'utente appena creato:
+```sql
 GRANT ALL PRIVILEGES ON DBPezzi . * TO 'freecad'@'%';
-
+```
 ## Risorse utilizzate:
 
 - Freecad 0.19: https://github.com/FreeCAD/FreeCAD/releases
@@ -115,8 +121,8 @@ https://hub.docker.com/_/mariadb
 - Gestione delle eccezioni:
     - ~~mancata connessione al database e/o credenziali sbagliate~~
     - ~~file linkato nel database non esistente~~
-    - lista clienti vuota
-    - lista materiali vuota
+    - ~~lista clienti vuota~~
+    - ~~lista materiali vuota~~
     - ~~file di configurazione mancante o vuoto e illegibile~~
     - percorso di salvataggio disegni non raggiungibile
     - permessi insufficienti percorso di salvataggio

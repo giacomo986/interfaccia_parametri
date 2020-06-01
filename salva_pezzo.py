@@ -10,18 +10,44 @@ import resources.finestra_salva as interfaccia
 import resources.database.database as database
 
 def InizializzaIterfaccia():
-
-    clienti = leggiCSV(cwd + "/resources/clienti.csv")
+    try:
+        clienti = leggiCSV(cwd + "/resources/clienti.csv")
+    except:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista clienti mancante o formattata male, controllare lista clienti al percorso: {}".format(cwd + "/resources/clienti.csv"))
+        return False
+    if not clienti:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista clienti vuota, popolare lista clienti nel percorso: {}".format(cwd + "/resources/clienti.csv"))
+        return False
     for element in clienti:
         ui.comboBox_Cliente.addItem(element[0], element[1])
     
-    materiali = leggiCSV(cwd + "/resources/materiali.csv")
+    try:
+        materiali = leggiCSV(cwd + "/resources/materiali.csv")
+    except:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista materiali mancante o formattata male, controllare lista materiali al percorso: {}".format(cwd + "/resources/materiali.csv"))
+        return False
+    if not materiali:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista materiali vuota, popolare lista materiali nel percorso: {}".format(cwd + "/resources/materiali.csv"))
+        return False
     for element in materiali:
         nome_materiale = element[0]
         peso_specifico = element[1]
-        ui.comboBox_Materiale.addItem("%s (%s g/cm³)" % (nome_materiale, peso_specifico), {"nome" : nome_materiale, "peso_specifico" : peso_specifico})
+        ui.comboBox_Materiale.addItem("{0} ({1} g/cm³)".format(nome_materiale, peso_specifico), {"nome" : nome_materiale, "peso_specifico" : peso_specifico})
 
-    denominazioni = leggiCSV(cwd + "/resources/denominazioni_profilo.csv")
+    try:
+        denominazioni = leggiCSV(cwd + "/resources/denominazioni_profilo.csv")
+    except:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista denominazioni o formattata male, controllare lista denominazioni al percorso: {}".format(cwd + "/resources/denominazioni_profilo.csv"))
+        return False
+    if not denominazioni:
+        qm = QtWidgets.QMessageBox
+        qm.information(None, "Errore", "Lista denominazioni vuota, popolare lista denominazioni nel percorso: {}".format(cwd + "/resources/denominazioni_profilo.csv"))
+        return False
     for element in denominazioni:
         ui.comboBox_Denominazione.addItem(element[0], element[1])
 
@@ -36,6 +62,7 @@ def InizializzaIterfaccia():
 
     ui.CancelButton.clicked.connect(ChiudiApplicazione)
     ui.AcceptButton.clicked.connect(SalvaDati)
+    return True
 
 def impostaMassa():
     peso_specifico = ui.comboBox_Materiale.currentData()["peso_specifico"]
@@ -93,7 +120,7 @@ def SalvaDati():
     if not(ui.lineEdit_CodicePadre.text() == ""):
         filePath = filePath + ui.lineEdit_CodicePadre.text() + "/"
 
-    nomeFile = str("%s%s.FCStd" % (filePath, ui.lineEdit_Riferimento.text())) # imposta il nome del file da salvare
+    nomeFile = str("{0}{1}.FCStd".format(filePath, ui.lineEdit_Riferimento.text())) # imposta il nome del file da salvare
 
 
     # Si connette al database, verifica che il file non sia già esistente e salva i dati con il percorso
@@ -104,7 +131,7 @@ def SalvaDati():
         assieme_esistente = database.trova_id_assieme(condizione_assieme)
 
         if assieme_esistente:
-            print("assieme esistente: %s" % assieme_esistente)
+            print("assieme esistente: {}".format(assieme_esistente))
             pass
         else:
             database.inserisci_riga_assiemi((ui.lineEdit_CodicePadre.text(),
@@ -118,7 +145,7 @@ def SalvaDati():
         disegno_esistente = database.trova_id_parte(condizione_parte)
 
         if disegno_esistente:
-            print("disegno esistente: %s" % disegno_esistente)
+            print("disegno esistente: {}".format(disegno_esistente))
             pass
         else:
             database.inserisci_riga_parti((ui.lineEdit_Riferimento.text(),
@@ -264,11 +291,12 @@ if len(objs) >= 1:
             Form = MainWindow()
             ui = interfaccia.Ui_Form()
             ui.setupUi(Form)
-            InizializzaIterfaccia()
-            Form.show()
+            tutto_ok = InizializzaIterfaccia()
+            if tutto_ok:
+                Form.show()
         except:
             qm = QtWidgets.QMessageBox
-            question = qm.information(None, "Errore file di configurazione", "File di configurazione non esistente o non leggibile.")
+            question = qm.information(None, "Errore di inizializzaione", "Possibili problemi di inizializzazione: file di configurazione mancante o scritto male.")
     else:
         qm = QtWidgets.QMessageBox
         qm.information(None, "Nessun solido selezionato", "Per avviare la macro è necessario selezionare un solido")
