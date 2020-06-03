@@ -1,4 +1,4 @@
-import sys, os, csv, datetime, Spreadsheet, json
+import sys, os, csv, datetime, Spreadsheet, json, re
 from PySide2 import QtWidgets, QtCore, QtGui
 from PySide2.QtCore import Qt
 
@@ -64,6 +64,15 @@ def InizializzaIterfaccia():
     ui.AcceptButton.clicked.connect(SalvaDati)
     return True
 
+def leggiCSV(PercorsoFile):
+    lista = []
+    with open(PercorsoFile, "r") as csvfile:
+        reader = csv.reader(csvfile, delimiter=",")
+        next(reader)
+        for row in reader:
+            lista.append(row)
+    return lista
+
 def impostaMassa():
     peso_specifico = ui.comboBox_Materiale.currentData()["peso_specifico"]
     ui.lineEdit_Massa.setText(str(calcolaMassa(peso_specifico)))
@@ -100,27 +109,40 @@ def esporta_e_linka():
     Documento_originale.addObject('App::Link',nome).setLink(corpo)
     pass
 
+def verifica_formattazione_riferimento(riferimento):
+    pattern = re.compile("(.+_[Rr][0-9]+)")
+    if pattern.match(riferimento):
+        return True
+    return False
+
 def SalvaDati():
-    if ui.lineEdit_Riferimento.text() == "":
+    riferimento = ui.lineEdit_Riferimento.text()
+    if riferimento == "":
         qm = QtWidgets.QMessageBox
         question = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
         return
 
-    Documento_nuovo = FreeCAD.newDocument(ui.lineEdit_Riferimento.text())
+    formattazione_riferimento = verifica_formattazione_riferimento(riferimento)
+    if not formattazione_riferimento:
+        qm = QtWidgets.QMessageBox
+        question = qm.information(None, 'Campo "Riferimento" scritto male', 'Il campo "Riferimento" non è formattato nel modo corretto. Bisogna formattare il nome nel seguente modo: \nnomedelriferimento_rxxx \ndove xxx = numero della revisione')
+        return
+
+    Documento_nuovo = FreeCAD.newDocument(riferimento)
     corpo = Documento_nuovo.copyObject(oggetto_selezionato, True)
-    corpo.Label = ui.lineEdit_Riferimento.text()
+    corpo.Label = riferimento
     if ui.lineEdit_CodicePadre.text():
         Parte = Documento_nuovo.addObject('App::Part', ui.lineEdit_CodicePadre.text())
         Parte.addObject(corpo)
     
-    FreeCAD.setActiveDocument(ui.lineEdit_Riferimento.text())
+    FreeCAD.setActiveDocument(riferimento)
 
     filePath = Percorso_disegni + ui.comboBox_Cliente.currentText() + "/"
 
     if not(ui.lineEdit_CodicePadre.text() == ""):
         filePath = filePath + ui.lineEdit_CodicePadre.text() + "/"
 
-    nomeFile = str("{0}{1}.FCStd".format(filePath, ui.lineEdit_Riferimento.text())) # imposta il nome del file da salvare
+    nomeFile = str("{0}{1}.FCStd".format(filePath, riferimento)) # imposta il nome del file da salvare
 
 
     # Si connette al database, verifica che il file non sia già esistente e salva i dati con il percorso
@@ -132,23 +154,24 @@ def SalvaDati():
 
         if assieme_esistente:
             print("assieme esistente: {}".format(assieme_esistente))
+            #TODO: scrivere funzione di aggiornamento assieme database
             pass
         else:
             database.inserisci_riga_assiemi((ui.lineEdit_CodicePadre.text(),
                                             ui.lineEdit_Macchina.text(),
                                             ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
                                             ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
-                                            ui.lineEdit_Codice.text(),
+                                            ui.comboBox_Cliente.currentText(),
                                             nomeFile))
 
-        condizione_parte = ui.lineEdit_Riferimento.text()
-        disegno_esistente = database.trova_id_parte(condizione_parte)
+        disegno_esistente = database.trova_id_parte(riferimento)
 
         if disegno_esistente:
             print("disegno esistente: {}".format(disegno_esistente))
+            #TODO: scrivere funzione di aggiornamento parte database
             pass
         else:
-            database.inserisci_riga_parti((ui.lineEdit_Riferimento.text(),
+            database.inserisci_riga_parti((riferimento,
                                         ui.lineEdit_CodicePadre.text(),
                                         ui.lineEdit_Macchina.text(),
                                         ui.comboBox_Materiale.currentData()["nome"],
@@ -194,15 +217,6 @@ def SalvaDati():
     FreeCAD.closeDocument(ui.lineEdit_Riferimento.text())
 
     ChiudiApplicazione()
-
-def leggiCSV(PercorsoFile):
-    lista = []
-    with open(PercorsoFile, "r") as csvfile:
-        reader = csv.reader(csvfile, delimiter=",")
-        next(reader)
-        for row in reader:
-            lista.append(row)
-    return lista
 
 def crea_spreadsheet():
     sheet = FreeCAD.ActiveDocument.addObject("Spreadsheet::Sheet")
