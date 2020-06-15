@@ -36,7 +36,6 @@ class CsvTableModel(QtCore.QAbstractTableModel):
         if role in (QtCore.Qt.DisplayRole, QtCore.Qt.EditRole):
             return self._data[index.row()][index.column()]
 
-
     # Additional features methods:
 
     def getCell(self, X, Y):

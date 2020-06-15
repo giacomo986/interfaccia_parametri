@@ -91,23 +91,28 @@ def aggiungiBoundBox():
     ui.comboBox_MisuraMax.addItem("lunghezza asse y: " + str(round(boundBox_.YLength, 3)), boundBox_.YLength)
     ui.comboBox_MisuraMax.addItem("lunghezza asse z: " + str(round(boundBox_.ZLength, 3)), boundBox_.ZLength)
 
-def esporta_e_linka():
-    selectedObjs = FreeCADGui.Selection.getSelection()[0]
+def esporta_e_linka(Documento_nuovo, Documento_originale, Oggetto, Percorso, Riferimento, Codice_Padre):
+    Oggetto.Label = Riferimento
 
-    nome = selectedObjs.Label
+    Documento_nuovo.saveAs(Percorso)
 
-    Documento_originale = FreeCAD.ActiveDocument
+    corpo = Documento_nuovo.moveObject(Oggetto, True)
 
-    Documento_nuovo = FreeCAD.newDocument(nome)
+    if Codice_Padre:
+        Parte = Documento_nuovo.addObject('App::Part', Codice_Padre)
+        Parte.addObject(corpo)
+    
+    sheet = crea_spreadsheet()
+    popola_spreadsheet(sheet)
 
-    Documento_nuovo.saveAs("/home/giacomo/%s.FCStd" % nome)
+    if Codice_Padre:
+        Parte.addObject(sheet)
 
-    corpo = Documento_nuovo.moveObject(selectedObjs, True)
+    Documento_nuovo.saveAs(Percorso)
+    Documento_originale.addObject('App::Link', Riferimento).setLink(corpo)
 
-    Documento_nuovo.saveAs("/home/giacomo/%s.FCStd" % nome)
-
-    Documento_originale.addObject('App::Link',nome).setLink(corpo)
-    pass
+    qm = QtWidgets.QMessageBox
+    qm.information(None, "Informazione", "File salvato. Percorso: " + Percorso)
 
 def verifica_formattazione_riferimento(riferimento):
     pattern = re.compile("(.+_[Rr][0-9]+)")
@@ -117,6 +122,8 @@ def verifica_formattazione_riferimento(riferimento):
 
 def SalvaDati():
     riferimento = ui.lineEdit_Riferimento.text()
+    codice_padre = ui.lineEdit_CodicePadre.text()
+
     if riferimento == "":
         qm = QtWidgets.QMessageBox
         question = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
@@ -128,28 +135,35 @@ def SalvaDati():
         question = qm.information(None, 'Campo "Riferimento" scritto male', 'Il campo "Riferimento" non è formattato nel modo corretto. Bisogna formattare il nome nel seguente modo: \nnomedelriferimento_rxxx \ndove xxx = numero della revisione')
         return
 
-    Documento_nuovo = FreeCAD.newDocument(riferimento)
-    corpo = Documento_nuovo.copyObject(oggetto_selezionato, True)
-    corpo.Label = riferimento
-    if ui.lineEdit_CodicePadre.text():
-        Parte = Documento_nuovo.addObject('App::Part', ui.lineEdit_CodicePadre.text())
-        Parte.addObject(corpo)
-    
-    FreeCAD.setActiveDocument(riferimento)
-
     filePath = Percorso_disegni + ui.comboBox_Cliente.currentText() + "/"
 
-    if not(ui.lineEdit_CodicePadre.text() == ""):
-        filePath = filePath + ui.lineEdit_CodicePadre.text() + "/"
+    if codice_padre:
+        filePath = filePath + codice_padre + "/"
 
     nomeFile = str("{0}{1}.FCStd".format(filePath, riferimento)) # imposta il nome del file da salvare
+    
+    if os.path.exists(nomeFile):
+        qm = QtWidgets.QMessageBox
+        question = qm.question(None, "File già esistente", "File già esistente. Vuoi sovrascrivere il file?", qm.Yes | qm.No)
+        if (question == qm.No):
+            return
 
+    os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
 
+    Documento_nuovo = FreeCAD.newDocument(riferimento)
+    
+    esporta_e_linka(Documento_nuovo,
+                    Documento_originale,
+                    oggetto_selezionato,
+                    nomeFile,
+                    riferimento,
+                    codice_padre)
+    
     # Si connette al database, verifica che il file non sia già esistente e salva i dati con il percorso
     connesso = database.connetti(cwd)
     if connesso:
 
-        condizione_assieme = ui.lineEdit_CodicePadre.text()
+        condizione_assieme = codice_padre
         assieme_esistente = database.trova_id_assieme(condizione_assieme)
 
         if assieme_esistente:
@@ -157,7 +171,7 @@ def SalvaDati():
             #TODO: scrivere funzione di aggiornamento assieme database
             pass
         else:
-            database.inserisci_riga_assiemi((ui.lineEdit_CodicePadre.text(),
+            database.inserisci_riga_assiemi((codice_padre,
                                             ui.lineEdit_Macchina.text(),
                                             ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
                                             ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
@@ -172,7 +186,7 @@ def SalvaDati():
             pass
         else:
             database.inserisci_riga_parti((riferimento,
-                                        ui.lineEdit_CodicePadre.text(),
+                                        codice_padre,
                                         ui.lineEdit_Macchina.text(),
                                         ui.comboBox_Materiale.currentData()["nome"],
                                         ui.comboBox_Denominazione.currentText(),
@@ -190,31 +204,6 @@ def SalvaDati():
         qm = QtWidgets.QMessageBox
         question = qm.information(None, "Database non raggiungibile", "Il database non è raggiungibile, assicurarsi che i dati di accesso siano corretti e che il database sia avviato.")
         return
-
-
-    sheet = crea_spreadsheet()
-    popola_spreadsheet(sheet)
-
-    if ui.lineEdit_CodicePadre.text():
-        Parte.addObject(sheet)
-
-    if os.path.exists(nomeFile):
-        qm = QtWidgets.QMessageBox
-        question = qm.question(None, "File già esistente", "File già esistente. Vuoi sovrascrivere il file?", qm.Yes | qm.No)
-        if (question == qm.No):
-            qm.information(None, "Informazione", "Nessuna modifica")
-        else:
-            os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
-            Documento_nuovo.saveAs(nomeFile)
-            qm = QtWidgets.QMessageBox
-            qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
-    else:
-        os.makedirs(filePath, exist_ok=True)  # Crea la cartella se non esiste
-        Documento_nuovo.saveAs(nomeFile)
-        qm = QtWidgets.QMessageBox
-        qm.information(None, "Informazione", "File salvato. Percorso: " + nomeFile)
-
-    FreeCAD.closeDocument(ui.lineEdit_Riferimento.text())
 
     ChiudiApplicazione()
 
@@ -277,9 +266,9 @@ class MainWindow(QtWidgets.QWidget):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.test_method()
+            self.chiudi()
 
-    def test_method(self):
+    def chiudi(self):
         print("Premuto il tasto Escape. Chiudo la finestra.")
         self.close()
 
