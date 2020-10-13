@@ -33,7 +33,7 @@ def disconnetti():
   mariadb_connection.close()
 
 def Crea_tabella():
-  cursor.execute( "CREATE TABLE IF NOT EXISTS tubi ("
+  cursor.execute( "CREATE TABLE IF NOT EXISTS parti ("
                   "   task_id INT AUTO_INCREMENT PRIMARY KEY,"
                   "   riferimento TEXT NOT NULL,"
                   "   codice_padre TEXT NOT NULL,"
@@ -59,7 +59,7 @@ def inserisci_riga(dati):
   mariadb_connection.commit()
 
 def verifica_tabella_database():
-  cursor.execute("SHOW TABLES LIKE 'tubi';")
+  cursor.execute("SHOW TABLES LIKE 'parti';")
   tabella = cursor.fetchone()
   if not tabella:
     Crea_tabella()
