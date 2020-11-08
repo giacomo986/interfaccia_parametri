@@ -1,19 +1,5 @@
 import subprocess, os, json
-
-try:
-  import mysql.connector as mariadb
-except:
-  print("modulo mysql connector non trovato, provo a scaricarlo.")
-  if os.name == "nt": # se la macro viene lanciata in ambiente windows
-    subprocess.call([os.getcwd() + "//python", "-m", 'pip', 'install', "mysql-connector-python"], shell=True)
-  else: # altrimenti siamo su linux
-    try:
-      subprocess.call([sys.executable, "-m", 'pip', 'install', "mysql-connector-python"], shell=True) # comando completo per l'installazione nella versione di python corretta
-    except:
-      subprocess.call(['pip', 'install', "mysql-connector-python"], shell=True) # comando che funziona nell'Appimage
-finally:
-  import mysql.connector as mariadb
-  print("modulo mysql trovato")
+import mysql.connector as mariadb
 
 def connetti(cwd):
   global mariadb_connection, cursor
