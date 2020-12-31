@@ -45,15 +45,16 @@ class Window(QWidget):
 class lista(QListWidget):
     pass
     def dragEnterEvent(self, e):
-        print(e.mimeData().)
-        print(e.mimeData().hasHtml())
-        print(e.mimeData().hasUrls())
-        print(e.mimeData().hasImage())
-        #print(e.mimeData().text())
+        #print(e.mimeData().)
+        print(e.mimeData().formats())
+        print(e.mimeData().data())
         e.accept()
 
     def dropEvent(self, e):
-        self.insertItem(1, e.mimeData().text())
+        print(help(e))
+        e.accept()
+        pass
+        #self.insertItem(1, e.mimeData().text())
         #self.setText(e.mimeData().text())
  
 App = QApplication(sys.argv)

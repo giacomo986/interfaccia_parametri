@@ -104,6 +104,7 @@ class ReorderableListModel(QtCore.QAbstractListModel):
         return ['application/vnd.treeviewdragdrop.list']
 
     def mimeData(self, indexes):
+        print("mimedata")
         mimedata = QtCore.QMimeData()
         encoded_data = QtCore.QByteArray()
         stream = QtCore.QDataStream(encoded_data, QtCore.QIODevice.WriteOnly)
@@ -115,6 +116,7 @@ class ReorderableListModel(QtCore.QAbstractListModel):
         return mimedata
 
     def dropMimeData(self, data, action, row, column, parent):
+        print("Drop the bomb")
         if action == QtCore.Qt.IgnoreAction:
             return True
         if not data.hasFormat('application/vnd.treeviewdragdrop.list'):
