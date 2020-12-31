@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QListWidget, QHBoxLayout,QListWidgetItem
+from PyQt5.QtWidgets import QApplication, QWidget, QListWidget, QHBoxLayout, QListWidgetItem, QAbstractItemView
 from PyQt5.QtGui import QIcon
 import sys
  
@@ -7,11 +7,12 @@ class Window(QWidget):
     def __init__(self):
         super().__init__()
  
-        self.myListWidget1 = lista()
+        self.myListWidget1 = QListWidget()
         self.myListWidget2 = QListWidget()
         self.myListWidget2.setViewMode(QListWidget.IconMode)
-        self.myListWidget1.setAcceptDrops(True)
-        self.myListWidget1.setDragEnabled(True)
+        #self.myListWidget1.setAcceptDrops(True)
+        #self.myListWidget1.setDragEnabled(True)
+        self.myListWidget1.setDragDropMode(QAbstractItemView.InternalMove) 
         self.myListWidget2.setAcceptDrops(True)
         self.myListWidget2.setDragEnabled(True)
         self.setGeometry(300, 350, 500, 300)
@@ -42,20 +43,17 @@ class Window(QWidget):
         self.show()
  
  
-class lista(QListWidget):
-    pass
-    def dragEnterEvent(self, e):
-        #print(e.mimeData().)
-        print(e.mimeData().formats())
-        print(e.mimeData().data())
-        e.accept()
+#class lista(QListWidget):
+#    def dragEnterEvent(self, e):
+#        self.selezionato = self.selectedIndexes()[0].row()
+#        print("selezionato: {}".format(self.selezionato))
+#        e.accept()
+#
+#    def dropEvent(self, e):
+#        e.accept()
+#        item = self.takeItem(self.selezionato)
+#        print("rimosso: {}".format(self.selezionato))
 
-    def dropEvent(self, e):
-        print(help(e))
-        e.accept()
-        pass
-        #self.insertItem(1, e.mimeData().text())
-        #self.setText(e.mimeData().text())
  
 App = QApplication(sys.argv)
 window = Window()
