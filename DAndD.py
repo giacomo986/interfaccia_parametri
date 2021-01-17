@@ -43,16 +43,6 @@ class Window(QWidget):
         self.show()
  
  
-#class lista(QListWidget):
-#    def dragEnterEvent(self, e):
-#        self.selezionato = self.selectedIndexes()[0].row()
-#        print("selezionato: {}".format(self.selezionato))
-#        e.accept()
-#
-#    def dropEvent(self, e):
-#        e.accept()
-#        item = self.takeItem(self.selezionato)
-#        print("rimosso: {}".format(self.selezionato))
 
  
 App = QApplication(sys.argv)
