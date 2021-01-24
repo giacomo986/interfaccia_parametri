@@ -2,40 +2,11 @@
 
 ## Obiettivo:
 
-Finestra per la compilazione di dati da salvare su foglio excel e database
+Finestra per la compilazione di dati da salvare su database.
 
-## Struttura della finestra:
+## Installazione prerequisiti:
 
-Riferimento: Codice disegno (testo libero)
-Codice padre: testo, assieme fittizio
-Macchina: testo libero, facoltativo
-Materiale: FERRO, INOX (legato a densità) associare a tabella esterna editabile
-Denominazione profilo: menu a tendina con nomi standard
-Data di creazione: (automatizzare)
 
-Nome: ridondante, nome del cliente (facoltativo)
-Codice: ridondante (facoltativo)
-Cliente: associare a tabella esterna editabile
-Q.tà per Disegno: valore numerico, default 1, editabile
-
-Misura di massima: automatiche, vedi box ingombro (orientamento sempre uguale)
-Massa: automatica, volume per densità (collegata a materiale)
-
-## Suggerimenti:
-
-Aggiungere salvataggio del file su percorso prestabilito, con creazione sottocartella in base al nome del cliente, quindi + proprietà di percorso file
-
-Estrae immediatamente i dati e li immette nel database
-
-Meglio gestire prima creazione e modifica con un unico tasto, quindi unica macro
-
-## Installazione:
-
-- Copiare il contenuto del repository all'interno della cartella macro di freecad
-- Installare PyQT5 con il comando:
-```shell
-pip3 install PyQT5
-```
 - Installare MySQL Python Connector con il comando:
 ```shell
 pip3 install mysql-connector-python
@@ -84,7 +55,7 @@ docker exec -it mariadbtest bash
 ```
 - Per accedere direttamente al database nel container: 
 ```shell
-mysql -h 172.17.0.2 -u root -p
+mysql -h 127.0.0.1 -u root -p
 ```
 - Creare un utente non amministratore all'interno di MariaDB: 
 ```sql
@@ -108,6 +79,40 @@ https://mariadb.com/kb/en/installing-and-using-mariadb-via-docker/
 https://hub.docker.com/_/mariadb
 - GUI per Docker: https://github.com/docker/kitematic/releases 
 - Esempi di codice Python per Mysql: https://www.w3schools.com/python/python_mysql_select.asp
+
+## Istruzioni:
+
+La Macro consiste in 2 finestre principali: una finestra per salvare i pezzi e una finestra per caricare i pezzi.
+
+Per utilizzare la Macro copiare il contenuto del repository all'interno della cartella macro di freecad.
+
+Per salvare i pezzi è necessario avere un disegno 3D aperto e un solido selezionato, avviare la macro "salva_pezzo" per aprire la finestra in cui è possibile registrare i parametri di salvataggio del pezzo selezionato.
+
+
+## Struttura della finestra:
+
+Riferimento: Codice disegno (testo libero)
+Codice padre: testo, assieme fittizio
+Macchina: testo libero, facoltativo
+Materiale: FERRO, INOX (legato a densità) associare a tabella esterna editabile
+Denominazione profilo: menu a tendina con nomi standard
+Data di creazione: (automatizzare)
+
+Nome: ridondante, nome del cliente (facoltativo)
+Codice: ridondante (facoltativo)
+Cliente: associare a tabella esterna editabile
+Q.tà per Disegno: valore numerico, default 1, editabile
+
+Misura di massima: automatiche, vedi box ingombro (orientamento sempre uguale)
+Massa: automatica, volume per densità (collegata a materiale)
+
+## Suggerimenti:
+
+Aggiungere salvataggio del file su percorso prestabilito, con creazione sottocartella in base al nome del cliente, quindi + proprietà di percorso file
+
+Estrae immediatamente i dati e li immette nel database
+
+Meglio gestire prima creazione e modifica con un unico tasto, quindi unica macro
 
 ## TODO list:
 

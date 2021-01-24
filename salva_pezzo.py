@@ -91,12 +91,12 @@ def aggiungiBoundBox():
     ui.comboBox_MisuraMax.addItem("lunghezza asse y: " + str(round(boundBox_.YLength, 3)), boundBox_.YLength)
     ui.comboBox_MisuraMax.addItem("lunghezza asse z: " + str(round(boundBox_.ZLength, 3)), boundBox_.ZLength)
 
-def esporta_e_linka(Documento_nuovo, Documento_originale, Oggetto, Percorso, Riferimento, Codice_Padre):
+def esporta(Documento_nuovo, Oggetto, Percorso, Riferimento, Codice_Padre):
     Oggetto.Label = Riferimento
 
-    Documento_nuovo.saveAs(Percorso)
+    #Documento_nuovo.saveAs(Percorso)
 
-    corpo = Documento_nuovo.moveObject(Oggetto, True)
+    corpo = Documento_nuovo.copyObject(Oggetto, True)
 
     if Codice_Padre:
         Parte = Documento_nuovo.addObject('App::Part', Codice_Padre)
@@ -109,7 +109,7 @@ def esporta_e_linka(Documento_nuovo, Documento_originale, Oggetto, Percorso, Rif
         Parte.addObject(sheet)
 
     Documento_nuovo.saveAs(Percorso)
-    Documento_originale.addObject('App::Link', Riferimento).setLink(corpo)
+    #Documento_originale.addObject('App::Link', Riferimento).setLink(corpo)
 
     qm = QtWidgets.QMessageBox
     qm.information(None, "Informazione", "File salvato. Percorso: " + Percorso)
@@ -126,13 +126,13 @@ def SalvaDati():
 
     if riferimento == "":
         qm = QtWidgets.QMessageBox
-        question = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
+        info = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
         return
 
     formattazione_riferimento = verifica_formattazione_riferimento(riferimento)
     if not formattazione_riferimento:
         qm = QtWidgets.QMessageBox
-        question = qm.information(None, 'Campo "Riferimento" scritto male', 'Il campo "Riferimento" non è formattato nel modo corretto. Bisogna formattare il nome nel seguente modo: \nnomedelriferimento_rxxx \ndove xxx = numero della revisione')
+        info = qm.information(None, 'Campo "Riferimento" scritto male', 'Il campo "Riferimento" non è formattato nel modo corretto. Bisogna formattare il nome nel seguente modo: \nnomedelriferimento_rxxx \ndove xxx = numero della revisione')
         return
 
     filePath = Percorso_disegni + ui.comboBox_Cliente.currentText() + "/"
@@ -152,12 +152,11 @@ def SalvaDati():
 
     Documento_nuovo = FreeCAD.newDocument(riferimento)
     
-    esporta_e_linka(Documento_nuovo,
-                    Documento_originale,
-                    oggetto_selezionato,
-                    nomeFile,
-                    riferimento,
-                    codice_padre)
+    esporta(Documento_nuovo,
+            oggetto_selezionato,
+            nomeFile,
+            riferimento,
+            codice_padre)
     
     # Si connette al database, verifica che il file non sia già esistente e salva i dati con il percorso
     connesso = database.connetti(cwd)
@@ -283,7 +282,7 @@ if len(objs) >= 1:
     if hasattr(oggetto_selezionato, "Shape"): # Se il primo oggetto della selezione è un solido allora la macro richiama la finestra
         # apre il file di configurazione che contiene il percorso di salvataggio dei disegni
         try:
-            with open("%s/resources/macro_config.json" % cwd, "r") as read_file:
+            with open("{}/resources/macro_config.json".format(cwd), "r") as read_file:
                 config = json.load(read_file)
             Percorso_disegni = config["Percorso_disegni"]
 
