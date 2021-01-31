@@ -84,10 +84,20 @@ https://hub.docker.com/_/mariadb
 
 La Macro consiste in 2 finestre principali: una finestra per salvare i pezzi e una finestra per caricare i pezzi.
 
-Per utilizzare la Macro copiare il contenuto del repository all'interno della cartella macro di freecad.
+Per utilizzare la Macro, copiare il contenuto del repository all'interno della cartella macro di freecad.
 
-Per salvare i pezzi è necessario avere un disegno 3D aperto e un solido selezionato, avviare la macro "salva_pezzo" per aprire la finestra in cui è possibile registrare i parametri di salvataggio del pezzo selezionato.
+#### File di configurazione:
 
+All'interno della cartella "resources":
+- aprire con un editor di testo il file "**macro_config.json**" e impostare il percorso della cartella di salvataggio desiderata. Tale percorso verrà utilizzato sia dalla macro di salvataggio. La macro di caricamento invece utilizzerà il percorso memorizzato all'interno del database.
+- I file "**clienti.csv**", "**denominazione_profile.csv**" e "**materiali.csv**" possono essere modificati tramite editor di testo per aggiungere o rimuovere i valori desiderati.
+
+All'interno della cartella "**resources/database**", aprire con un editor di testo il file "**db_config.json**" e impostare i parametri di accesso al database. (Non è necessario se il database è stato creato seguendo le istruzioni dei prerequisiti)
+
+#### Uso delle macro:
+Per salvare i pezzi è necessario avere un disegno 3D aperto e un solido selezionato, avviare la macro "**salva_pezzo.py**" per aprire la finestra in cui è possibile registrare i parametri di salvataggio del pezzo selezionato. Una volta compilato i campi nel modo desiderato, premere il pulsante salva che provvederà a creare una copia dell'elemento selezionato e lo salverà nel percorso selezionato.
+
+Per caricare un pezzo, avviare la macro "**carica_pezzo.py**" e utilizzare i campi per interrogare il database. Selezionare il pezzo desiderato e premere carica.
 
 ## Struttura della finestra:
 
@@ -108,11 +118,11 @@ Massa: automatica, volume per densità (collegata a materiale)
 
 ## Suggerimenti:
 
-Aggiungere salvataggio del file su percorso prestabilito, con creazione sottocartella in base al nome del cliente, quindi + proprietà di percorso file
+~~Aggiungere salvataggio del file su percorso prestabilito, con creazione sottocartella in base al nome del cliente, quindi + proprietà di percorso file~~
 
-Estrae immediatamente i dati e li immette nel database
+~~Estrae immediatamente i dati e li immette nel database~~
 
-Meglio gestire prima creazione e modifica con un unico tasto, quindi unica macro
+~~Meglio gestire prima creazione e modifica con un unico tasto, quindi unica macro~~
 
 ## TODO list:
 
@@ -121,7 +131,7 @@ Meglio gestire prima creazione e modifica con un unico tasto, quindi unica macro
 - ~~Maschera per la ricerca dei pezzi tramite database~~
 - Funzione di riconoscimento revisioni vecchie da cancellare dal database (mantenere il file)
 - Funzione e maschera per eliminazione manuale dei pezzi dal database
-- gestione suffisso delle parti e gestione dell'indice di revisione
+- ~~gestione suffisso delle parti e gestione dell'indice di revisione~~
 - il nome del file originale del cliente diventa il codice padre (assieme)
 - Gestione delle eccezioni:
     - ~~mancata connessione al database e/o credenziali sbagliate~~

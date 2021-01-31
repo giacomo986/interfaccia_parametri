@@ -129,11 +129,12 @@ def SalvaDati():
         info = qm.information(None, 'Campo "Riferimento" vuoto', 'Il campo "Riferimento" è vuoto, riempire il campo "Riferimento" prima di confermare')
         return
 
-    formattazione_riferimento = verifica_formattazione_riferimento(riferimento)
-    if not formattazione_riferimento:
-        qm = QtWidgets.QMessageBox
-        info = qm.information(None, 'Campo "Riferimento" scritto male', 'Il campo "Riferimento" non è formattato nel modo corretto. Bisogna formattare il nome nel seguente modo: \nnomedelriferimento_rxxx \ndove xxx = numero della revisione')
-        return
+    if Formattazione_rif:
+        formattazione_riferimento = verifica_formattazione_riferimento(riferimento)
+        if not formattazione_riferimento:
+            qm = QtWidgets.QMessageBox
+            info = qm.information(None, 'Campo "Riferimento" scritto male', 'Il campo "Riferimento" non è formattato nel modo corretto. Bisogna formattare il nome nel seguente modo: \nnomedelriferimento_rxxx \ndove xxx = numero della revisione')
+            return
 
     filePath = Percorso_disegni + ui.comboBox_Cliente.currentText() + "/"
 
@@ -285,6 +286,7 @@ if len(objs) >= 1:
             with open("{}/resources/macro_config.json".format(cwd), "r") as read_file:
                 config = json.load(read_file)
             Percorso_disegni = config["Percorso_disegni"]
+            Formattazione_rif = config["Formattazione_riferimento"]
 
             Documento_originale = FreeCAD.ActiveDocument # Salva un riferimento del documento originale aperto per comodità
         
