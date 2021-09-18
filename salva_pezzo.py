@@ -68,7 +68,7 @@ def leggiCSV(PercorsoFile):
     lista = []
     with open(PercorsoFile, "r") as csvfile:
         reader = csv.reader(csvfile, delimiter=",")
-        next(reader)
+        next(reader) # salta la riga di header
         for row in reader:
             lista.append(row)
     return lista
@@ -87,9 +87,9 @@ def aggiungiBoundBox():
     s = oggetto_selezionato.Shape
     boundBox_= s.BoundBox
 
-    ui.comboBox_MisuraMax.addItem("lunghezza asse x: " + str(round(boundBox_.XLength, 3)), boundBox_.XLength)
-    ui.comboBox_MisuraMax.addItem("lunghezza asse y: " + str(round(boundBox_.YLength, 3)), boundBox_.YLength)
-    ui.comboBox_MisuraMax.addItem("lunghezza asse z: " + str(round(boundBox_.ZLength, 3)), boundBox_.ZLength)
+    ui.comboBox_MisuraMax.addItem(f"lunghezza asse x: {str(round(boundBox_.XLength, 3))}", boundBox_.XLength)
+    ui.comboBox_MisuraMax.addItem(f"lunghezza asse y: {str(round(boundBox_.YLength, 3))}", boundBox_.YLength)
+    ui.comboBox_MisuraMax.addItem(f"lunghezza asse z: {str(round(boundBox_.ZLength, 3))}", boundBox_.ZLength)
 
 def esporta(Documento_nuovo, Oggetto, Percorso, Riferimento, Codice_Padre):
     Oggetto.Label = Riferimento
@@ -141,7 +141,7 @@ def SalvaDati():
     if codice_padre:
         filePath = filePath + codice_padre + "/"
 
-    nomeFile = str("{0}{1}.FCStd".format(filePath, riferimento)) # imposta il nome del file da salvare
+    nomeFile = str(f"{filePath}{riferimento}.FCStd") # imposta il nome del file da salvare
     
     if os.path.exists(nomeFile):
         qm = QtWidgets.QMessageBox
@@ -160,56 +160,86 @@ def SalvaDati():
             codice_padre)
     
     # Si connette al database, verifica che il file non sia già esistente e salva i dati con il percorso
-    connesso = database.connetti(cwd)
-    if connesso:
+    if database.connetti(cwd):
 
-        condizione_assieme = codice_padre
-        assieme_esistente = database.trova_id_assieme(condizione_assieme)
-
-        if assieme_esistente:
-            print("assieme esistente: {}".format(assieme_esistente))
-            #TODO: scrivere funzione di aggiornamento assieme database
-            pass
-        else:
-            database.inserisci_riga_assiemi((codice_padre,
-                                            ui.lineEdit_Macchina.text(),
-                                            ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
-                                            ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
-                                            ui.comboBox_Cliente.currentText(),
-                                            nomeFile))
-
-        disegno_esistente = database.trova_id_parte(riferimento)
-
-        if disegno_esistente:
-            print("disegno esistente: {}".format(disegno_esistente))
-            #TODO: scrivere funzione di aggiornamento parte database
-            pass
+        if disegno_esistente := database.trova_id_parte(riferimento):
+            print(f"disegno esistente: {disegno_esistente}")
+            dati = (riferimento,
+                    codice_padre,
+                    ui.lineEdit_Macchina.text(),
+                    ui.comboBox_Materiale.currentData()["nome"],
+                    ui.comboBox_Denominazione.currentText(),
+                    ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
+                    ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
+                    ui.lineEdit_Nome.text(),
+                    ui.lineEdit_Codice.text(),
+                    ui.comboBox_Cliente.currentText(),
+                    int(ui.lineEdit_Quantita.text()),
+                    ui.comboBox_MisuraMax.currentData(),
+                    float(ui.lineEdit_Massa.text())
+                    )
+            if database.aggiorna_riga_parti(dati):
+                print("Aggiornamento avvenuto con successo")
         else:
             database.inserisci_riga_parti((riferimento,
-                                        codice_padre,
-                                        ui.lineEdit_Macchina.text(),
-                                        ui.comboBox_Materiale.currentData()["nome"],
-                                        ui.comboBox_Denominazione.currentText(),
-                                        ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
-                                        ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
-                                        ui.lineEdit_Nome.text(),
-                                        ui.lineEdit_Codice.text(),
-                                        ui.comboBox_Cliente.currentText(),
-                                        int(ui.lineEdit_Quantita.text()),
-                                        ui.comboBox_MisuraMax.currentData(),
-                                        float(ui.lineEdit_Massa.text()),
-                                        nomeFile))
+                                           codice_padre,
+                                           ui.lineEdit_Macchina.text(),
+                                           ui.comboBox_Materiale.currentData()["nome"],
+                                           ui.comboBox_Denominazione.currentText(),
+                                           ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
+                                           ui.DateTimeEdit_ultima_modifica.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"),
+                                           ui.lineEdit_Nome.text(),
+                                           ui.lineEdit_Codice.text(),
+                                           ui.comboBox_Cliente.currentText(),
+                                           int(ui.lineEdit_Quantita.text()),
+                                           ui.comboBox_MisuraMax.currentData(),
+                                           float(ui.lineEdit_Massa.text()),
+                                           nomeFile))
         database.disconnetti()
     else:
         qm = QtWidgets.QMessageBox
         question = qm.information(None, "Database non raggiungibile", "Il database non è raggiungibile, assicurarsi che i dati di accesso siano corretti e che il database sia avviato.")
         return
+    
+    crea_screenshot(f"{filePath}{riferimento}.png")
 
     ChiudiApplicazione()
 
+def Carica_dati_esistenti(sheet):
+    #print(riga_selezionata)
+    ui.lineEdit_Riferimento.setText(str(sheet.get("B1")))
+    ui.lineEdit_CodicePadre.setText(str(sheet.get("B2")))
+    ui.lineEdit_Macchina.setText(str(sheet.get("B3")))
+    
+    Index_Materiale = ui.comboBox_Materiale.findText(sheet.get("B4"), QtCore.Qt.MatchFixedString)
+    if Index_Materiale >= 0:
+         ui.comboBox_Materiale.setCurrentIndex(Index_Materiale)
+         impostaMassa()
+    
+    Index_Denominazione = ui.comboBox_Denominazione.findText(sheet.get("B5"), QtCore.Qt.MatchFixedString)
+    if Index_Denominazione >= 0:
+         ui.comboBox_Denominazione.setCurrentIndex(Index_Denominazione)
+
+    ui.DateTimeEdit_Data.setDateTime(sheet.get("B6"))
+    ui.DateTimeEdit_ultima_modifica.setDateTime(datetime.datetime.now())
+    ui.lineEdit_Nome.setText(str(sheet.get("B8")))
+    ui.lineEdit_Codice.setText(str(sheet.get("B9")))
+    
+    Index_Cliente = ui.comboBox_Cliente.findText(sheet.get("B10"), QtCore.Qt.MatchFixedString)
+    if Index_Cliente >= 0:
+         ui.comboBox_Cliente.setCurrentIndex(Index_Cliente)
+
+    ui.lineEdit_Quantita.setText(str(sheet.get("B11")))
+    #ui.comboBox_MisuraMax.addItem("lunghezza: " + str(round(riga_selezionata[11], 3)), riga_selezionata[11])
+    #ui.lineEdit_Massa.setText(str(riga_selezionata[12]))
+
+def crea_screenshot(percorso):
+    Gui.SendMsgToActiveView('ViewAxo')
+    Gui.ActiveDocument.ActiveView.saveImage(percorso, 1000, 1000,'Transparent')
+
 def crea_spreadsheet():
     sheet = FreeCAD.ActiveDocument.addObject("Spreadsheet::Sheet")
-    sheet.Label = "SS_%s" % ui.lineEdit_Riferimento.text()
+    sheet.Label = f"SS_{ui.lineEdit_Riferimento.text()}"
     return sheet
 
 def popola_spreadsheet(sheet):
@@ -266,10 +296,10 @@ class MainWindow(QtWidgets.QWidget):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
+            print("Premuto il tasto Escape. Chiudo la finestra.")
             self.chiudi()
 
     def chiudi(self):
-        print("Premuto il tasto Escape. Chiudo la finestra.")
         self.close()
 
 ########################################
@@ -296,6 +326,8 @@ if len(objs) >= 1:
             ui = interfaccia.Ui_Form()
             ui.setupUi(Form)
             tutto_ok = InizializzaIterfaccia()
+            
+            
             if tutto_ok:
                 Form.show()
         except:

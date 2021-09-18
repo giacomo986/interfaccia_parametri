@@ -126,11 +126,16 @@ Massa: automatica, volume per densità (collegata a materiale)
 
 ## TODO list:
 
+- Correggere bug sovrascrittura file esistenti
+- ~~Funzione per modifica manuale dei pezzi dal database~~
+- Funzione eliminazione manuale dei pezzi dal database
+- ~~Creazione anteprima durante salvataggio pezzo~~
+- ~~Visualizzazione anteprima durante caricamento pezzo~~
+
 - ~~File di configurazione con percorso di salvataggio dei file~~
 - ~~Funzione di estrazione dati da database~~
 - ~~Maschera per la ricerca dei pezzi tramite database~~
 - Funzione di riconoscimento revisioni vecchie da cancellare dal database (mantenere il file)
-- Funzione e maschera per eliminazione manuale dei pezzi dal database
 - ~~gestione suffisso delle parti e gestione dell'indice di revisione~~
 - il nome del file originale del cliente diventa il codice padre (assieme)
 - Gestione delle eccezioni:

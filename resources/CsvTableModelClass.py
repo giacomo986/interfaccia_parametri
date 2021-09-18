@@ -13,6 +13,7 @@ class CsvTableModel(QtCore.QAbstractTableModel):
                         "Materiale",
                         "Denominazione profilo",
                         "Data di creazione",
+                        "Data ultima modifica",
                         "Nome",
                         "Codice",
                         "Cliente",

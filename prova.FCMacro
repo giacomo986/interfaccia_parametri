@@ -1,0 +1,5 @@
+import Spreadsheet
+for obj in FreeCAD.ActiveDocument.Objects:
+	print(str(type(obj)) == "<class 'Spreadsheet.Sheet'>")
+
+print(FreeCAD)
