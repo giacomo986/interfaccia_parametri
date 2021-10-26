@@ -42,7 +42,7 @@ class Ui_Form(object):
         self.horizontalLayout2.addWidget(self.label_anteprima)
 
         #pixmap = QtGui.QPixmap("resources/no image.png")
-        self.label_anteprima.setFixedSize(200, 200)
+        self.label_anteprima.setFixedSize(250, 250)
         self.label_anteprima.setScaledContents(True)
         #self.label_anteprima.setPixmap(pixmap)  
 
