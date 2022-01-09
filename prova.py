@@ -17,3 +17,5 @@ CREATE TABLE IF NOT EXISTS parti (
     percorso                TEXT NOT NULL
 );
 """
+
+print("Puzzoni")

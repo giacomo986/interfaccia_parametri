@@ -7,9 +7,9 @@ Finestra per la compilazione di dati da salvare su database.
 ## Installazione prerequisiti:
 
 
-- Installare MySQL Python Connector con il comando:
+- Installare psycopg2 per connettersi al database postgres con il comando:
 ```shell
-pip3 install mysql-connector-python
+pip3 install psycopg2
 ```
 - Installare docker:
 ```shell
@@ -23,62 +23,55 @@ sudo systemctl enable docker
 ```shell
 sudo usermod -aG docker $USER
 ```
-- Scaricare Mariadb per Docker:
+- Scaricare Postgres per Docker:
 ```shell
-docker pull mariadb/server
+docker pull postgres
 ```
-- Avviare la prima volta il container Mariadb:
+- Avviare la prima volta il container Postgres:
 ```shell
-docker run --name mariadbtest -e MYSQL_ROOT_PASSWORD=mypass -d -p 3306:3306  mariadb/server
+docker run --name freeprof -e POSTGRES_PASSWORD=mypass -d -p 5432:5432 postgres
 ```
+dove freeprof è il nome del container
 - Per Avviare, fermare o riavviare il container Mariadb:
 ```shell
-docker start mariadbtest
+docker start postgres
 ```
 ```shell
-docker stop mariadbtest
+docker stop postgres
 ```
 ```shell
-docker restart mariadbtest
+docker restart postgres
 ```
-- Il container Mariadbtest non si avvia automaticamente all'avvio del sistema operativo. Per fare ciò usiamo crontab:
+- Il container Postgres non si avvia automaticamente all'avvio del sistema operativo. Per fare ciò usiamo crontab:
 ```shell
 crontab -e
 ```
 - selezioniamo l'editor preferito e aggiungiamo la seguente riga in fondo al file di testo appena aperto:
 ```text
-@reboot docker start mariadbtest
+@reboot docker start postgres
 ```
 - Per accedere alla linea di comando del container:
 ```shell
-docker exec -it mariadbtest bash
+docker exec -it postgres bash
 ```
 - Per accedere direttamente al database nel container: 
 ```shell
-mysql -h 127.0.0.1 -u root -p
+docker exec -ti freeprof psql -d postgres -U postgres
 ```
-- Creare un utente non amministratore all'interno di MariaDB: 
+- Creare un nuovo utente e all'interno di postgres: 
 ```sql
-CREATE USER 'freecad'@'%' IDENTIFIED BY 'freecad';
+CREATE USER freecad WITH PASSWORD 'casualpass';
 ```
-Il simbolo '**%**' indica che l'utente è accessibile anche al di fuori del container.
 - Creare un database per la macro:
 ```sql
-CREATE DATABASE DBPezzi;
-```
-- Coferire poteri d'accesso all'utente appena creato:
-```sql
-GRANT ALL PRIVILEGES ON DBPezzi . * TO 'freecad'@'%';
+CREATE DATABASE freeprof OWNER freecad;
 ```
 ## Risorse utilizzate:
 
 - Freecad 0.19: https://github.com/FreeCAD/FreeCAD/releases
 - Docker: https://www.docker.com/
-- Mariadb per docker:
-https://mariadb.com/kb/en/installing-and-using-mariadb-via-docker/
-https://hub.docker.com/_/mariadb
 - GUI per Docker: https://github.com/docker/kitematic/releases 
-- Esempi di codice Python per Mysql: https://www.w3schools.com/python/python_mysql_select.asp
+- Esempi di codice Python per Postgres: https://www.postgresqltutorial.com/postgresql-python/connect/
 
 ## Istruzioni:
 
