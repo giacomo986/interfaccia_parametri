@@ -298,12 +298,10 @@ def popola_spreadsheet(sheet):
     sheet.set("B5", ui.comboBox_Denominazione.currentText())
 
     sheet.set("A6", "Data di creazione:")
-    sheet.set("B6", ui.DateTimeEdit_Data.dateTime(
-    ).toPython().strftime("%Y-%m-%d %H:%M:%S"))
+    sheet.set("B6", ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"))
 
     sheet.set("A7", "Data ultima modifica:")
-    sheet.set("B7", ui.DateTimeEdit_Data.dateTime(
-    ).toPython().strftime("%Y-%m-%d %H:%M:%S"))
+    sheet.set("B7", ui.DateTimeEdit_Data.dateTime().toPython().strftime("%Y-%m-%d %H:%M:%S"))
 
     sheet.set("A8", "Nome:")
     sheet.set("B8", ui.lineEdit_Nome.text())

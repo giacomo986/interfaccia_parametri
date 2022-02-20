@@ -2,6 +2,44 @@
 import psycopg2
 from config import config
 
+def crea_tabella_parti(cursor):
+    cursor.execute("CREATE TABLE IF NOT EXISTS parti ("
+                    "parte_id                serial PRIMARY KEY, "
+                    "riferimento             TEXT NOT NULL, "
+                    "codice_padre            TEXT NOT NULL, "
+                    "macchina                TEXT NOT NULL, "
+                    "materiale               TEXT NOT NULL, "
+                    "denominazione_profilo   TEXT NOT NULL, "
+                    "data_creazione          date NOT NULL, "
+                    "ultima_modifica         date NOT NULL, "
+                    "nome                    TEXT NOT NULL, "
+                    "codice                  TEXT NOT NULL, "
+                    "cliente                 TEXT NOT NULL, "
+                    "quantità_per_disegno    INT NOT NULL, "
+                    "misura_di_massima       FLOAT NOT NULL, "
+                    "massa                   FLOAT NOT NULL, "
+                    "percorso                TEXT NOT NULL "
+                    ");")
+    
+def inserisci_riga_parti(conn, cursor, dati):
+    campi_tubo = ("INSERT INTO parti "
+                  "(riferimento, codice_padre, macchina, materiale, denominazione_profilo, data_creazione, ultima_modifica, nome, codice, cliente, quantità_per_disegno, misura_di_massima, massa, percorso) "
+                  "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);")
+
+    cursor.execute(campi_tubo, dati)
+    conn.commit()
+
+def verifica_tabelle_database(cursor):
+    cursor.execute("SELECT * "
+                   "FROM pg_catalog.pg_tables "
+                   "WHERE schemaname != 'pg_catalog' AND "
+                   "schemaname != 'information_schema' AND "
+                   "tablename = 'parti';")
+    tabella = cursor.fetchone()
+    #print(tabella)
+    if not tabella:
+        crea_tabella_parti(cursor)
+
 def connect():
     """ Connect to the PostgreSQL database server """
     conn = None
@@ -12,20 +50,45 @@ def connect():
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**params)
-		
+
         # create a cursor
-        cur = conn.cursor()
-        
-	# execute a statement
+        cursor = conn.cursor()
+
+        # execute a statement
         print('PostgreSQL database version:')
-        cur.execute('SELECT version()')
+        cursor.execute('SELECT version()')
 
         # display the PostgreSQL database server version
-        db_version = cur.fetchone()
+        db_version = cursor.fetchone()
         print(db_version)
-       
-	# close the communication with the PostgreSQL
-        cur.close()
+
+        verifica_tabelle_database(cursor)
+        """
+        cursor.execute("CREATE TABLE IF NOT EXISTS parti ("
+                    "parte_id                serial PRIMARY KEY, "
+                    "riferimento             TEXT NOT NULL, "
+                    "codice_padre            TEXT NOT NULL, "
+                    "macchina                TEXT NOT NULL, "
+                    "materiale               TEXT NOT NULL, "
+                    "denominazione_profilo   TEXT NOT NULL, "
+                    "data_creazione          date NOT NULL, "
+                    "ultima_modifica         date NOT NULL, "
+                    "nome                    TEXT NOT NULL, "
+                    "codice                  TEXT NOT NULL, "
+                    "cliente                 TEXT NOT NULL, "
+                    "quantità_per_disegno    INT NOT NULL, "
+                    "misura_di_massima       FLOAT NOT NULL, "
+                    "massa                   FLOAT NOT NULL, "
+                    "percorso                TEXT NOT NULL "
+                    ");")
+        """
+        dati_2 = ['primo', 'secondo', '', '', '', '2010-01-02 05:06:07', '2015-01-02 05:06:07', '', '', '', '5', '555', '6', 'questo percorso']
+        
+        inserisci_riga_parti(conn, cursor, dati_2)
+        
+        cursor.close()
+        conn.commit()
+
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
@@ -36,13 +99,3 @@ def connect():
 
 if __name__ == '__main__':
     connect()
-    
-#docker run --name mariadbtest -e MYSQL_ROOT_PASSWORD=mypass -d -p 3306:3306  mariadb/server
-#docker run --name freeprof -e POSTGRES_PASSWORD=freeprof -d postgres
-#docker run --name freeprof -e POSTGRES_PASSWORD=esempio -d -p 5432:5432 postgres
-#docker exec -ti freeprof psql -d postgres -U postgres
-#CREATE USER freecad WITH PASSWORD 'freecad';
-#CREATE DATABASE freeprof OWNER freecad;
-
-#docker exec -ti freeprof psql -d freeprof -U freecad
-#psql -h localhost -p 5432 -d freeprof -U freecad

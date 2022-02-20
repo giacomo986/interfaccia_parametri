@@ -58,6 +58,10 @@ docker exec -it postgres bash
 ```shell
 docker exec -ti freeprof psql -d postgres -U postgres
 ```
+Oppure: 
+```shell
+psql -h localhost -p 5432 -d freeprof -U freecad
+```
 - Creare un nuovo utente e all'interno di postgres: 
 ```sql
 CREATE USER freecad WITH PASSWORD 'casualpass';
